@@ -5,11 +5,17 @@ public class Game implements Runnable {
 
 	@Override
 	public void run() {
+		testMethod();
 		while (true) {
 			getInput();
 			update();
 			render();
 		}
+	}
+
+	private void testMethod() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void render() {
