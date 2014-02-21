@@ -1,11 +1,14 @@
+package rogue.game;
+
 public class Game implements Runnable {
+	Screen currentScreen;
+	
 	public Game() {
 
 	}
 
 	@Override
 	public void run() {
-		testMethod();
 		while (true) {
 			getInput();
 			update();
@@ -13,19 +16,12 @@ public class Game implements Runnable {
 		}
 	}
 
-	private void testMethod() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	private void render() {
-		// TODO Auto-generated method stub
-
+		currentScreen.render();
 	}
 
 	private void update() {
-		// TODO Auto-generated method stub
-
+		currentScreen.update();
 	}
 
 	private void getInput() {
