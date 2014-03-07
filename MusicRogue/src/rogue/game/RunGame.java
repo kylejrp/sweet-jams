@@ -13,7 +13,6 @@ public class RunGame {
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new MusicRogueGame("Music Rogue"));
 			appgc.setDisplayMode(640, 480, false);
-			appgc.setShowFPS(false);
 			appgc.start();
 		}
 		catch (SlickException ex)
