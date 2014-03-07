@@ -1,5 +1,5 @@
 package rogue.map;
 
 public enum MapType {
-	DUNGEON, CITY, FOREST;
+	DUNGEON, CITY, FOREST, TEST;
 }
