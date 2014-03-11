@@ -3,14 +3,17 @@ package rogue.map;
 import rogue.entity.Entity;
 
 public class Map {
-	Entity[][] entityLayer;
+	private char[][] environmentLayer;
+	private Entity[][] entityLayer;
+	
 	
 	public Map(MapType type, int size){
-		entityLayer = MapGenerator.generate(type, size);
+		environmentLayer = MapGenerator.generate(type, size);
+		entityLayer = new Entity[size][size];
 	}
 	
-	public void put(Entity entity){
-		// TODO
+	public void put(Entity entity, Position position){
+		entityLayer[position.getX()][position.getY()] = entity;
 	}
 	
 	public void move(Entity entity, Position position){
@@ -25,6 +28,14 @@ public class Map {
 	public Entity remove(Entity entity){
 		// TODO
 		return null;
+	}
+
+	public char[][] getEnvironmentLayer() {
+		return environmentLayer;
+	}
+
+	public Entity[][] getEntityLayer() {
+		return entityLayer;
 	}
 	
 }

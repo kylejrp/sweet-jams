@@ -18,10 +18,11 @@ public class MapGenerator {
 		
 		// Initialized to null in case parseFile throws exception
 		// Could probably be handled better with exceptions
+		
 		char[][] map = null;
 
 		switch (type) {
-		case TEST:
+		case TESTING:
 			try {
 				map = parseFile("MusicRogue/src/rogue/map/testmap.txt");
 			} catch (IOException e) {
@@ -29,7 +30,7 @@ public class MapGenerator {
 			}
 			break;
 		default:
-			generate(MapType.TEST, MAX_SIZE);
+			generate(MapType.TESTING, MAX_SIZE);
 			break;
 		}
 
