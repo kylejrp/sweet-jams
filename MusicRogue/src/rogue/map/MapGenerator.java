@@ -14,7 +14,7 @@ import rogue.entity.Entity;
 public class MapGenerator {
 	private static int MAX_SIZE = 100;
 
-	public static char[][] generate(MapType type, int size) {
+	public static EnvironmentEntity[][] generate(MapType type, int size) {
 		
 		// Initialized to null in case parseFile throws exception
 		// Could probably be handled better with exceptions

@@ -1,9 +1,10 @@
 package rogue.map;
 
 import rogue.entity.Entity;
+import rogue.entity.EnvironmentEntity;
 
 public class Map {
-	private char[][] environmentLayer;
+	private EnvironmentEntity[][] environmentLayer;
 	private Entity[][] entityLayer;
 	
 	
