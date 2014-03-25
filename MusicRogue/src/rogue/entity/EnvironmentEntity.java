@@ -1,11 +1,30 @@
 package rogue.entity;
 
-import org.lwjgl.LWJGLException;
-import org.lwjgl.PointerBuffer;
-
 public class EnvironmentEntity implements Entity {
 
 
+	private char charRep ;
+	
+	public enum environmentType
+	{
+		WALL, HALLWAY, FLOOR
+	}
+	
+	
+	public EnvironmentEntity(environmentType t)
+	{
+		switch(t)
+		{
+		case WALL: charRep = '#' ;
+		break ;
+		case HALLWAY: charRep = '%' ;
+		break ;
+		case FLOOR: charRep = '.' ;
+		default: 
+			break;
+		}
+	}
+	
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
@@ -28,6 +47,12 @@ public class EnvironmentEntity implements Entity {
 	public void draw(float x, float y) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	
+	public char getCharRep()
+	{
+		return charRep ;
 	}
 
 }
