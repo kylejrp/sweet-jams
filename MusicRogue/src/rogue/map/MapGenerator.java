@@ -33,36 +33,30 @@ public class MapGenerator
 		//Width is y axis, length is x axis.
 		int width = getRandomDimension(wmin, wmax) ;
 		int length = getRandomDimension(lmin, lmax) ;
-		
-		
-		
-		
+
 		// Build the random placement/non-collision part.
-		
-		
-		
-		
-		int startX = 0 ;
+
+		int startX = 1 ;
 		int startY = 0 ;
 		
 		
 		for (int i = startY; i<width; i++)
 		{
-			for(int j=startY; j<length; j++)
+			for(int j=startX; j<length; j++)
 			{
 				if(i == startY || i == width - 1)
 				{
 					EnvironmentEntity ground = new EnvironmentEntity(EnvironmentEntity.environmentType.WALL) ;
 					map[i][j] = ground ;
 				}
-				else if(i != startX || i != startX + width - 1)
+				else
 				{
-					if(j == startX || j == startX + length -1)
+					if(j == startX || j == length - startX)
 					{
 						EnvironmentEntity ground = new EnvironmentEntity(EnvironmentEntity.environmentType.WALL) ;
 						map[i][j] = ground ;
 					}
-					else if(j != startX || j != startX + length -1)
+					else
 					{
 						EnvironmentEntity ground = new EnvironmentEntity(EnvironmentEntity.environmentType.FLOOR) ;
 						map[i][j] = ground ;
@@ -94,7 +88,7 @@ public class MapGenerator
 	{
 		//This is just to test that I didn't fucking erupt everything.
 		EnvironmentEntity[][] mapTest ;
-		mapTest = generateBottomLayer(80, 60) ;
+		mapTest = generateBottomLayer(64, 64) ;
 		for(int i = 0; i < mapTest.length ; i++)
 		{
 			for (int j = 0; j < mapTest[0].length; j++)
