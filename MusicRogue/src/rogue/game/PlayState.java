@@ -1,4 +1,4 @@
-package rogue.game.state;
+package rogue.game;
 
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;

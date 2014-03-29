@@ -8,9 +8,9 @@ public class Map {
 	private Entity[][] entityLayer;
 	
 	
-	public Map(MapType type, int size){
-		environmentLayer = MapGenerator.generate(type, size);
-		entityLayer = new Entity[size][size];
+	public Map(int size){
+		environmentLayer = MapGenerator.generateBottomLayer(size);
+		entityLayer = MapGenerator.generateTopLayer(size);
 	}
 	
 	public void put(Entity entity, Position position){
@@ -31,7 +31,7 @@ public class Map {
 		return null;
 	}
 
-	public char[][] getEnvironmentLayer() {
+	public EnvironmentEntity[][] getEnvironmentLayer() {
 		return environmentLayer;
 	}
 
