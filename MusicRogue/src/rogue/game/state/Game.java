@@ -8,10 +8,15 @@ import rogue.game.client.Client;
 import rogue.game.client.EchoClient;
 import rogue.game.message.MessageHandler;
 import rogue.game.state.InputBuffer.Input;
+import rogue.map.Map;
+import rogue.map.MapGenerator;
 
 public class Game implements Runnable {
 	private MessageHandler handler;
 	private boolean running;
+	private Map map;
+
+	private final int MAP_SIZE = 64;
 
 	public static void main(String[] args) {
 		List<Client> clients = new LinkedList<Client>();
@@ -28,6 +33,15 @@ public class Game implements Runnable {
 		for (Client c : clients) {
 			handler.addObserver(c);
 		}
+
+		// TODO: send server info
+
+		// Generate map and tell clients
+		map = new Map(MAP_SIZE);
+		handler.notifyMapCreation(map);
+		
+		// TODO: place players on the map
+		handler.notifyPositions(map.getEntityLayer());
 	}
 
 	@Override
@@ -35,36 +49,29 @@ public class Game implements Runnable {
 		running = true;
 		while (running) {
 			update();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 
 	private void update() {
 		if (isDone()) {
 			running = false;
-		} else {
-			// Do map stuff later, just figure out messages for now
-			// movePlayers();
-			// handler.notifyPositions(map.getEntityLayer());
-			handler.notifyPositions(null);
+		} else if (beatHasElapsed()) {
+			movePlayers();
+			handler.notifyPositions(map.getEntityLayer());
 		}
 	}
 
-	/*
-	 * This is broken ahhhh implement later private void movePlayers() { for
-	 * (int i = 0; i < inputs.length; i++) { // Read each player's input buffer
-	 * Input input = inputs[i].readInput();
-	 * 
-	 * // Check if a movement is valid if (validMovement(players[i], input)) {
-	 * // Move the player to the new position Position newPos =
-	 * Position.calcPosition( players[i].getPosition(), input);
-	 * map.move(players[i], newPos); } } }
-	 */
+	private boolean beatHasElapsed() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	private void movePlayers() {
+		// TODO
+		// Read each player's input buffer
+		// Check if a movement is valid if (validMovement(players[i], input)) {
+		// Move the player to the new position
+	}
 
 	private boolean validMovement(Player player, Input input) {
 		// TODO Auto-generated method stub
