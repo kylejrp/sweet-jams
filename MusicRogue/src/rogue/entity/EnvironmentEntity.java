@@ -1,6 +1,6 @@
 package rogue.entity;
 
-public class EnvironmentEntity implements Entity {
+public class EnvironmentEntity extends Entity {
 
 
 	private char charRep ;

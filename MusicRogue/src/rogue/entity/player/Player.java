@@ -3,18 +3,8 @@ package rogue.entity.player;
 import rogue.entity.Entity;
 import rogue.map.Position;
 
-public class Player implements Entity{
-	Position position;
+public class Player extends Entity{
 	
-	public Position getPosition() {
-		return new Position(position.getX(), position.getY());
-	}
-
-	public void setPosition(Position position) {
-		this.position.setX(position.getX());
-		this.position.setY(position.getY());
-	}
-
 	public Player(){
 		
 	}
