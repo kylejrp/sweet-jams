@@ -9,8 +9,6 @@ import rogue.game.message.Message.MessageDetail;
 import rogue.game.message.Message.MessageType;
 
 public class MessageHandler extends Observable{
-
-	
 	public void notifyPositions(Entity[][] entityLayer) {
 		Message msg = new Message(MessageType.ENTITY);
 		msg.setDetail(MessageDetail.UPDATE);
@@ -19,5 +17,4 @@ public class MessageHandler extends Observable{
 		setChanged();
 		notifyObservers(msg);
 	}
-	
 }

@@ -36,6 +36,10 @@ public class Message implements Serializable {
 		return detail;
 	}
 
+	public MessageType getType() {
+		return type;
+	}
+
 	// Attatch a serializable object so that message can also be serializable
 	// and sent over a network
 	public void setObject(Serializable o) {
