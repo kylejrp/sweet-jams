@@ -3,11 +3,11 @@ package rogue.game.client;
 import java.util.Observable;
 import java.util.Observer;
 
-import com.sun.corba.se.impl.protocol.giopmsgheaders.MessageHandler;
-
 import rogue.game.message.Message;
+import rogue.game.message.MessageHandler;
+import rogue.game.state.InputBuffer.Input;
 
-public abstract class Client implements Observer {
+public abstract class Client extends Observable implements Observer {
 	protected int clientNumber;
 	static int currentNumber = 1;
 
@@ -17,11 +17,21 @@ public abstract class Client implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		// TODO: Could/should make a check here to make sure o is a MessageHandler
-		Message msg = (Message) arg;
-		recieveMessage(msg);
+		if (o instanceof MessageHandler) {
+			Message msg = (Message) arg;
+			recieveMessage(msg);
+		}
 	}
 
 	public abstract void recieveMessage(Message msg);
+	
+	public void sendInput(Input input){
+		hasChanged();
+		notifyObservers(input);
+	}
+	
+	public String toString(){
+		return this.getClass().getSimpleName() + "("+ clientNumber + ")";
+	}
 
 }

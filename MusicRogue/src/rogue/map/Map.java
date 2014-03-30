@@ -60,4 +60,10 @@ public class Map{
 		return entityLayer;
 	}
 	
+	public Position getSpawnSquare() {
+		// TODO: Do some big boy calculations here
+		int x = (int) (Math.random()*entityLayer.length);
+		int y = (int) (Math.random()*entityLayer[0].length);
+		return new Position(x, y);
+	}
 }
