@@ -32,16 +32,30 @@ public class Game implements Runnable {
 		handler = new MessageHandler();
 		for (Client c : clients) {
 			handler.addObserver(c);
+			createPlayer(c);
 		}
 
 		// TODO: send server info
 
 		// Generate map and tell clients
 		map = new Map(MAP_SIZE);
-		handler.notifyMapCreation(map);
+		handler.notifyCreation(map);
 		
 		// TODO: place players on the map
+		placePlayers();
 		handler.notifyPositions(map.getEntityLayer());
+	}
+
+	private void createPlayer(Client c) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	// Place players on map
+	// Link players with a client
+	private void placePlayers() {
+		// TODO
+		
 	}
 
 	@Override
@@ -80,6 +94,11 @@ public class Game implements Runnable {
 
 	private boolean isDone() {
 		return false;
+	}
+
+	public InputBuffer getInputBuffer(Client client) {
+
+		
 	}
 
 }

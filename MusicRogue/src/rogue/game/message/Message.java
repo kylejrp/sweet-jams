@@ -7,7 +7,9 @@ public class Message {
 		// Messages that the server sends to players
 		ENTITY, MAP, SERVER,
 		// Messages that the players send to the server
-		PLAYER, INPUT;
+		PLAYER, INPUT,
+		// Messages that we create when something went wrong
+		ERROR;
 	}
 	
 	public static enum MessageDetail {
