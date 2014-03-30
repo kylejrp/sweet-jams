@@ -8,14 +8,14 @@ public class MapViewerClient extends Client {
 
 	@Override
 	public void recieveMessage(Message msg) {
-		EnvironmentEntity[][] map;
+		EnvironmentEntity[][] envLayer;
 
 		if (msg.getObject() instanceof EnvironmentEntity[][]
 				&& msg.getDetail() == Message.MessageDetail.CREATE) {
-			map = (EnvironmentEntity[][]) msg.getObject();
-			for (int i = 0; i < map.length; i++) {
-				for (int j = 0; j < map.length; j++) {
-					System.out.print(map[i][j].getCharRep());
+			envLayer = (EnvironmentEntity[][]) msg.getObject();
+			for (int i = 0; i < envLayer.length; i++) {
+				for (int j = 0; j < envLayer.length; j++) {
+					System.out.print(envLayer[i][j].getCharRep());
 				}
 				System.out.println();
 			}
