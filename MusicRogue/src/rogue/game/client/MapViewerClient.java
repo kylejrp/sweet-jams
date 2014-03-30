@@ -13,7 +13,6 @@ public class MapViewerClient extends Client {
 		if (msg.getObject() instanceof EnvironmentEntity[][]
 				&& msg.getDetail() == Message.MessageDetail.CREATE) {
 			map = (EnvironmentEntity[][]) msg.getObject();
-			map = MapGenerator.generateBottomLayer(64);
 			for (int i = 0; i < map.length; i++) {
 				for (int j = 0; j < map.length; j++) {
 					System.out.print(map[i][j].getCharRep());
