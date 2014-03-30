@@ -3,14 +3,14 @@ package rogue.map;
 import rogue.entity.Entity;
 import rogue.entity.EnvironmentEntity;
 
-public class Map {
+public class GameMap {
 	private EnvironmentEntity[][] environmentLayer;
 	private Entity[][] entityLayer;
 	
 	
-	public Map(int size){
-		environmentLayer = MapGenerator.generateBottomLayer(size);
-		entityLayer = MapGenerator.generateTopLayer(size);
+	public GameMap(int size){
+		environmentLayer = GameMapGenerator.generateBottomLayer(size);
+		entityLayer = GameMapGenerator.generateTopLayer(size);
 	}
 	
 	public void put(Entity entity, Position position){
@@ -39,4 +39,10 @@ public class Map {
 		return entityLayer;
 	}
 	
+	public Position getSpawnSquare() {
+		// TODO: Do some big boy calculations here
+		int x = (int) (Math.random()*entityLayer.length);
+		int y = (int) (Math.random()*entityLayer[0].length);
+		return new Position(x, y);
+	}
 }

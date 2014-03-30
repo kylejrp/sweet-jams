@@ -2,18 +2,14 @@ package rogue.game.message;
 
 import java.io.Serializable;
 
-public class Message implements Serializable {
-
-	/**
-	 * Not sure if this is correct, if serialization is broken it's probably this
-	 */
-	private static final long serialVersionUID = 907554197612152985L;
-
+public class Message {
 	public static enum MessageType {
 		// Messages that the server sends to players
 		ENTITY, MAP, SERVER,
 		// Messages that the players send to the server
-		PLAYER, INPUT;
+		PLAYER, INPUT,
+		// Messages that we create when something went wrong
+		ERROR;
 	}
 	
 	public static enum MessageDetail {
@@ -22,7 +18,7 @@ public class Message implements Serializable {
 
 	MessageType type;
 	MessageDetail detail;
-	Serializable associatedObject;
+	Object associatedObject;
 
 	public Message(MessageType type){
 		this.type = type;
@@ -40,16 +36,19 @@ public class Message implements Serializable {
 		return type;
 	}
 
-	// Attatch a serializable object so that message can also be serializable
-	// and sent over a network
-	public void setObject(Serializable o) {
+	// TODO: Change object to Serializable to be able to send things over the network
+	public void setObject(Object o) {
 		// TODO: Ensure object matches message type, throw exception otherwise
 		associatedObject = o;
 	}
 
-	// Returns the object attatched when the message was created
+	// Returns the object attached when the message was created
 	public Object getObject() {
 		return associatedObject;
+	}
+	
+	public String toString() {
+		return getType() + "_" + getDetail() + (getObject() == null ? getObject().toString() : "");
 	}
 
 }
