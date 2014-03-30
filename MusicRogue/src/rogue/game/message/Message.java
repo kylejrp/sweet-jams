@@ -46,5 +46,9 @@ public class Message {
 	public Object getObject() {
 		return associatedObject;
 	}
+	
+	public String toString() {
+		return getType() + "_" + getDetail() + (getObject() == null ? getObject().toString() : "");
+	}
 
 }

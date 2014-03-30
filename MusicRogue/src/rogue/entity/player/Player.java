@@ -1,24 +1,31 @@
 package rogue.entity.player;
 
 import rogue.entity.Entity;
+import rogue.game.state.InputBuffer;
 import rogue.map.Position;
 
 public class Player implements Entity{
-	Position position;
+	private Position position;
+	private InputBuffer buffer;
+	
+	
+	public Player(){
+		buffer = new InputBuffer(4);
+	}
+
+	public InputBuffer getBuffer() {
+		return buffer;
+	}
 	
 	public Position getPosition() {
-		return new Position(position.getX(), position.getY());
+		return position;
 	}
 
 	public void setPosition(Position position) {
-		this.position.setX(position.getX());
-		this.position.setY(position.getY());
+		this.position = position;
 	}
 
-	public Player(){
-		
-	}
-
+	
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub

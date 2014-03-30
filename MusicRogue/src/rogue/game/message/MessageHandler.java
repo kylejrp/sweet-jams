@@ -79,7 +79,7 @@ public class MessageHandler extends Observable implements Observer{
 		Client client = (Client) obs;
 		Input input = (Input) obj;
 	
-		game.getInputBuffer(client).addInput();
+		game.getInputBuffer(client).addInput(input);
 		
 	}
 }
