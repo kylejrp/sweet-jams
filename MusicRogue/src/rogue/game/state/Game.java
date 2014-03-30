@@ -1,26 +1,31 @@
 package rogue.game.state;
 
+import java.util.AbstractMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Map.Entry;
 
+import rogue.entity.EnvironmentEntity;
 import rogue.entity.player.Player;
 import rogue.game.client.Client;
 import rogue.game.client.EchoClient;
 import rogue.game.message.MessageHandler;
 import rogue.game.state.InputBuffer.Input;
 import rogue.map.GameMap;
-import rogue.map.GameMapGenerator;
+import rogue.map.Position;
 
 public class Game implements Runnable {
 	private MessageHandler handler;
 	private boolean running;
 	private GameMap map;
+	private List<Entry<Client, Player>> clientPlayerPairs;
 
 	private final int MAP_SIZE = 64;
 
 	public static void main(String[] args) {
 		List<Client> clients = new LinkedList<Client>();
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 2; i++) {
 			clients.add(new EchoClient());
 		}
 		new Thread(new Game(clients)).start();
@@ -29,33 +34,39 @@ public class Game implements Runnable {
 	public Game(List<Client> clients) {
 		// Add clients to the MessageHandler, only talk with them through the
 		// handler from now on
-		handler = new MessageHandler();
-		for (Client c : clients) {
-			handler.addObserver(c);
-			createPlayer(c);
-		}
+		handler = new MessageHandler(this);
 
 		// TODO: send server info
+
+		clientPlayerPairs = new ArrayList<>();
+		for (Client c : clients) {
+			handler.addObserver(c);
+			pairClientToNewPlayer(c);
+		}
 
 		// Generate map and tell clients
 		map = new GameMap(MAP_SIZE);
 		handler.notifyCreation(map);
-		
-		// TODO: place players on the map
+
 		placePlayers();
-		handler.notifyPositions(map.getEntityLayer());
 	}
 
-	private void createPlayer(Client c) {
-		// TODO Auto-generated method stub
-		
+	private void pairClientToNewPlayer(Client c) {
+		Player player = new Player();
+		handler.notifyCreation(player);
+
+		Entry<Client, Player> entry = new AbstractMap.SimpleEntry<>(c, player);
+		clientPlayerPairs.add(entry);
 	}
 
 	// Place players on map
 	// Link players with a client
 	private void placePlayers() {
-		// TODO
-		
+		for (Entry<Client, Player> entry : clientPlayerPairs) {
+			Player p = entry.getValue();
+			p.setPosition(map.getSpawnSquare());
+		}
+		handler.notifyPositions(map.getEntityLayer());
 	}
 
 	@Override
@@ -71,7 +82,6 @@ public class Game implements Runnable {
 			running = false;
 		} else if (beatHasElapsed()) {
 			movePlayers();
-			handler.notifyPositions(map.getEntityLayer());
 		}
 	}
 
@@ -81,24 +91,40 @@ public class Game implements Runnable {
 	}
 
 	private void movePlayers() {
-		// TODO
 		// Read each player's input buffer
+		for (Entry<Client, Player> entry : clientPlayerPairs) {
+			Player p = entry.getValue();
+			Input input = p.getBuffer().readInput();
+			if (validMovement(p, input)) {
+				p.setPosition(Position.calcPosition(p.getPosition(), input));
+			}
+		}
+		handler.notifyPositions(map.getEntityLayer());
+
 		// Check if a movement is valid if (validMovement(players[i], input)) {
 		// Move the player to the new position
 	}
 
 	private boolean validMovement(Player player, Input input) {
-		// TODO Auto-generated method stub
-		return true;
+		Position newPos = Position.calcPosition(player.getPosition(), input);
+		EnvironmentEntity placeWeWantToMove = map.getEnvironmentLayer()[newPos
+				.getX()][newPos.getY()];
+		return placeWeWantToMove
+				.equals(EnvironmentEntity.environmentType.FLOOR);
 	}
 
 	private boolean isDone() {
 		return false;
 	}
 
+	// Finds the input buffer if it exists, returns null otherwise
 	public InputBuffer getInputBuffer(Client client) {
-
-		
+		for (Entry<Client, Player> entry : clientPlayerPairs) {
+			if (entry.getKey().equals(client)) {
+				return entry.getValue().getBuffer();
+			}
+		}
+		return null;
 	}
 
 }

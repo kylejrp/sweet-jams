@@ -29,5 +29,9 @@ public abstract class Client extends Observable implements Observer {
 		hasChanged();
 		notifyObservers(input);
 	}
+	
+	public String toString(){
+		return this.getClass().getSimpleName() + "("+ clientNumber + ")";
+	}
 
 }
