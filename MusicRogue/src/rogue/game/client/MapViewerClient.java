@@ -1,6 +1,5 @@
 package rogue.game.client;
 
-import rogue.map.MapGenerator;
 import rogue.entity.EnvironmentEntity;
 import rogue.game.message.Message;
 

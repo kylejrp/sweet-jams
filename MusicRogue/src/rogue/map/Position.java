@@ -1,6 +1,5 @@
 package rogue.map;
 
-import rogue.entity.player.Player;
 import rogue.game.state.InputBuffer.Input;
 
 public class Position {

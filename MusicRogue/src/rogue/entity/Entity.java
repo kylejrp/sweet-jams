@@ -13,8 +13,7 @@ public abstract class Entity implements Renderable{
 	}
 
 	public void setPosition(Position position) {
-		this.position.setX(position.getX());
-		this.position.setY(position.getY());
+		this.position = position;
 	}
 	
 	public void setPosition(int x, int y){

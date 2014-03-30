@@ -5,25 +5,24 @@ import java.util.Observable;
 import java.util.Observer;
 
 import rogue.entity.Entity;
-import rogue.entity.player.Player;
 import rogue.game.client.Client;
 import rogue.game.client.EchoClient;
 import rogue.game.message.Message.MessageDetail;
 import rogue.game.message.Message.MessageType;
-import rogue.game.state.Game;
+import rogue.game.state.GameState;
 import rogue.game.state.InputBuffer.Input;
-import rogue.map.Map;
+import rogue.map.GameMap;
 
 public class MessageHandler extends Observable implements Observer{
 	public static void main(String[] args) {
 		MessageHandler handler = new MessageHandler(null);
 		handler.addObserver(new EchoClient());
-		handler.notifyCreation(new Map(50));
+		handler.notifyCreation(new GameMap(50));
 	}
 	
-	private final Game game;
+	private final GameState game;
 	
-	public MessageHandler(Game game){
+	public MessageHandler(GameState game){
 		this.game = game;
 	}
 	
@@ -39,7 +38,7 @@ public class MessageHandler extends Observable implements Observer{
 	public void notifyUpdate(Object updatedObject){
 		Message msg;
 		
-		if(updatedObject instanceof Map){
+		if(updatedObject instanceof GameMap){
 			msg = new Message(MessageType.MAP);
 		} else if(updatedObject instanceof Entity){
 			msg = new Message(MessageType.ENTITY);
@@ -57,7 +56,7 @@ public class MessageHandler extends Observable implements Observer{
 	public void notifyCreation(Object createdObject) {
 		Message msg;
 		
-		if(createdObject instanceof Map){
+		if(createdObject instanceof GameMap){
 			msg = new Message(MessageType.MAP);
 		} else if(createdObject instanceof Entity){
 			msg = new Message(MessageType.ENTITY);

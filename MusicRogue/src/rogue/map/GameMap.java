@@ -7,14 +7,14 @@ import java.util.List;
 import rogue.entity.Entity;
 import rogue.entity.EnvironmentEntity;
 
-public class Map{
+public class GameMap{
 	private EnvironmentEntity[][] environmentLayer;
 	private Entity[][] entityLayer;
 	private List<Entity>  entities ;
 	
-	public Map(int size){
-		environmentLayer = MapGenerator.generateBottomLayer(size);
-		entityLayer = MapGenerator.generateTopLayer(size);
+	public GameMap(int size){
+		environmentLayer = GameMapGenerator.generateBottomLayer(size);
+		entityLayer = GameMapGenerator.generateTopLayer(size);
 		entities = new ArrayList<Entity>() ;
 	}
 	

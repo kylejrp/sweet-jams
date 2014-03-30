@@ -1,6 +1,5 @@
 package rogue.game.message;
 
-import java.io.Serializable;
 
 public class Message {
 	public static enum MessageType {
