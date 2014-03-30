@@ -1,17 +1,26 @@
 package rogue.game.client;
 
+import rogue.map.MapGenerator;
+import rogue.entity.EnvironmentEntity;
 import rogue.game.message.Message;
 
-public class MapViewerClient extends Client{
+public class MapViewerClient extends Client {
 
 	@Override
 	public void recieveMessage(Message msg) {
-		// TODO Auto-generated method stub
-		// Check message type = MAP
-		// Check message detail = CREATE
-		// render map
-		
-		msg.getObject() ;//cast to environment layer
+		EnvironmentEntity[][] map;
+
+		if (msg.getObject() instanceof EnvironmentEntity[][]
+				&& msg.getDetail() == Message.MessageDetail.CREATE) {
+			map = (EnvironmentEntity[][]) msg.getObject();
+			map = MapGenerator.generateBottomLayer(64);
+			for (int i = 0; i < map.length; i++) {
+				for (int j = 0; j < map.length; j++) {
+					System.out.print(map[i][j].getCharRep());
+				}
+				System.out.println();
+			}
+		}
 	}
 
 }
