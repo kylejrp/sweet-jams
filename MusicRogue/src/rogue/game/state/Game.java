@@ -12,13 +12,13 @@ import rogue.game.client.Client;
 import rogue.game.client.EchoClient;
 import rogue.game.message.MessageHandler;
 import rogue.game.state.InputBuffer.Input;
-import rogue.map.GameMap;
+import rogue.map.Map;
 import rogue.map.Position;
 
 public class Game implements Runnable {
 	private MessageHandler handler;
 	private boolean running;
-	private GameMap map;
+	private Map map;
 	private List<Entry<Client, Player>> clientPlayerPairs;
 
 	private final int MAP_SIZE = 64;
@@ -45,7 +45,7 @@ public class Game implements Runnable {
 		}
 
 		// Generate map and tell clients
-		map = new GameMap(MAP_SIZE);
+		map = new Map(MAP_SIZE);
 		handler.notifyCreation(map);
 
 		placePlayers();

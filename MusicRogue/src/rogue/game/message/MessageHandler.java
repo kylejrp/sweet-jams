@@ -12,13 +12,13 @@ import rogue.game.message.Message.MessageDetail;
 import rogue.game.message.Message.MessageType;
 import rogue.game.state.Game;
 import rogue.game.state.InputBuffer.Input;
-import rogue.map.GameMap;
+import rogue.map.Map;
 
 public class MessageHandler extends Observable implements Observer{
 	public static void main(String[] args) {
 		MessageHandler handler = new MessageHandler(null);
 		handler.addObserver(new EchoClient());
-		handler.notifyCreation(new GameMap(50));
+		handler.notifyCreation(new Map(50));
 	}
 	
 	private final Game game;
@@ -39,7 +39,7 @@ public class MessageHandler extends Observable implements Observer{
 	public void notifyUpdate(Object updatedObject){
 		Message msg;
 		
-		if(updatedObject instanceof GameMap){
+		if(updatedObject instanceof Map){
 			msg = new Message(MessageType.MAP);
 		} else if(updatedObject instanceof Entity){
 			msg = new Message(MessageType.ENTITY);
@@ -57,7 +57,7 @@ public class MessageHandler extends Observable implements Observer{
 	public void notifyCreation(Object createdObject) {
 		Message msg;
 		
-		if(createdObject instanceof GameMap){
+		if(createdObject instanceof Map){
 			msg = new Message(MessageType.MAP);
 		} else if(createdObject instanceof Entity){
 			msg = new Message(MessageType.ENTITY);

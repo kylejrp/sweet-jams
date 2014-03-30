@@ -3,14 +3,14 @@ package rogue.map;
 import rogue.entity.Entity;
 import rogue.entity.EnvironmentEntity;
 
-public class GameMap {
+public class Map {
 	private EnvironmentEntity[][] environmentLayer;
 	private Entity[][] entityLayer;
 	
 	
-	public GameMap(int size){
-		environmentLayer = GameMapGenerator.generateBottomLayer(size);
-		entityLayer = GameMapGenerator.generateTopLayer(size);
+	public Map(int size){
+		environmentLayer = MapGenerator.generateBottomLayer(size);
+		entityLayer = MapGenerator.generateTopLayer(size);
 	}
 	
 	public void put(Entity entity, Position position){

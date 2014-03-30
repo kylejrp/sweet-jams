@@ -4,7 +4,7 @@ import java.util.Random;
 
 import rogue.entity.EnvironmentEntity;
 
-public class GameMapGenerator {
+public class MapGenerator {
 
 	private static int getRandomDimension(int min, int max) {
 		Random randomInt = new Random();
