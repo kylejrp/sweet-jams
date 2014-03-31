@@ -1,5 +1,7 @@
 package rogue.entity.player;
 
+import org.newdawn.slick.Color;
+
 import rogue.entity.Entity;
 import rogue.game.state.InputBuffer;
 import rogue.map.Position;
@@ -9,7 +11,8 @@ public class Player extends Entity{
 	private InputBuffer buffer;
 	
 	
-	public Player(){
+	public Player(Position position){
+		super(position);
 		buffer = new InputBuffer(4);
 	}
 
@@ -47,6 +50,10 @@ public class Player extends Entity{
 	public void draw(float x, float y) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public Color getColor(){
+		return Color.blue;
 	}
 	
 }

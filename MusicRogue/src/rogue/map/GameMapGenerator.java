@@ -5,9 +5,9 @@ import java.util.Random;
 import rogue.entity.EnvironmentEntity;
 
 public class GameMapGenerator {
+	private static Random randomInt = new Random(200L);
 
 	private static int getRandomDimension(int min, int max) {
-		Random randomInt = new Random();
 		int value = Math.abs(randomInt.nextInt(max - 1));
 		while (value < min) {
 			value = Math.abs(randomInt.nextInt(max - 1));
@@ -22,15 +22,15 @@ public class GameMapGenerator {
 		int length = getRandomDimension(lmin, lmax);
 		for (int i = startY; i < startY + width && i < map.length; i++) {
 			for (int j = startX; j < startX + length && j < map.length; j++) {
+				Position position = new Position(j, i);
 				EnvironmentEntity ground = new EnvironmentEntity(
-						EnvironmentEntity.environmentType.FLOOR);
+						EnvironmentEntity.environmentType.FLOOR, position);
 				map[i][j] = ground;
 			}
 		}
 	}
 
 	private static void buildMultipleRooms(EnvironmentEntity[][] map) {
-		Random randomInt = new Random();
 		int numberOfRooms = 350;
 
 		for (int i = 0; i < numberOfRooms; i++) {
@@ -47,8 +47,9 @@ public class GameMapGenerator {
 		for (int i = 0; i < map.length; i+=4) {
 			for(int j=0; j<map.length; j++)
 			{
+				Position position = new Position(j, i);
 				EnvironmentEntity ground = new EnvironmentEntity(
-					EnvironmentEntity.environmentType.FLOOR);
+					EnvironmentEntity.environmentType.FLOOR, position);
 				map[i][j] = ground;
 			}
 		}
@@ -59,30 +60,35 @@ public class GameMapGenerator {
 		for (int i = 0; i < x; i++) {
 			for (int j = 0; j < x; j++) {
 				if (map[i][j] == null) {
+					Position position = new Position(j, i);
 					EnvironmentEntity ground = new EnvironmentEntity(
-							EnvironmentEntity.environmentType.WALL);
+							EnvironmentEntity.environmentType.WALL, position);
 					map[i][j] = ground;
 				}
 			}
 		}
 		for (int i = 0; i < x; i++) {
+			Position position = new Position(0, i);
 			EnvironmentEntity ground = new EnvironmentEntity(
-					EnvironmentEntity.environmentType.WALL);
+					EnvironmentEntity.environmentType.WALL, position);
 			map[i][0] = ground;
 		}
 		for (int i = 0; i < x; i++) {
+			Position position = new Position(x-1, i);
 			EnvironmentEntity ground = new EnvironmentEntity(
-					EnvironmentEntity.environmentType.WALL);
+					EnvironmentEntity.environmentType.WALL, position);
 			map[i][x - 1] = ground;
 		}
 		for (int i = 0; i < x; i++) {
+			Position position = new Position(i, 0);
 			EnvironmentEntity ground = new EnvironmentEntity(
-					EnvironmentEntity.environmentType.WALL);
+					EnvironmentEntity.environmentType.WALL, position);
 			map[0][i] = ground;
 		}
 		for (int i = 0; i < x; i++) {
+			Position position = new Position(i, x-1);
 			EnvironmentEntity ground = new EnvironmentEntity(
-					EnvironmentEntity.environmentType.WALL);
+					EnvironmentEntity.environmentType.WALL, position);
 			map[x - 1][i] = ground;
 		}
 	}
@@ -104,7 +110,7 @@ public class GameMapGenerator {
 	public static void main(String[] args) {
 		// This is just to test that I didn't fucking erupt everything.
 		EnvironmentEntity[][] mapTest;
-		mapTest = generateBottomLayer(64);
+		mapTest = generateBottomLayer(32);
 		for (int i = 0; i < mapTest.length; i++) {
 			for (int j = 0; j < mapTest.length; j++) {
 				if (mapTest[i][j] != null) {

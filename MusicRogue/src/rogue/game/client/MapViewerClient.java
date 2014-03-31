@@ -2,6 +2,7 @@ package rogue.game.client;
 
 import rogue.entity.EnvironmentEntity;
 import rogue.game.message.Message;
+import rogue.map.GameMap;
 
 public class MapViewerClient extends Client {
 
@@ -9,9 +10,10 @@ public class MapViewerClient extends Client {
 	public void recieveMessage(Message msg) {
 		EnvironmentEntity[][] envLayer;
 
-		if (msg.getObject() instanceof EnvironmentEntity[][]
+		if (msg.getObject() instanceof GameMap
 				&& msg.getDetail() == Message.MessageDetail.CREATE) {
-			envLayer = (EnvironmentEntity[][]) msg.getObject();
+			GameMap map = (GameMap) msg.getObject();
+			envLayer = map.getEnvironmentLayer();
 			for (int i = 0; i < envLayer.length; i++) {
 				for (int j = 0; j < envLayer.length; j++) {
 					System.out.print(envLayer[i][j].getCharRep());

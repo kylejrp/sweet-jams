@@ -10,6 +10,7 @@ import rogue.entity.EnvironmentEntity;
 import rogue.entity.player.Player;
 import rogue.game.client.Client;
 import rogue.game.client.EchoClient;
+import rogue.game.client.MapViewerClient;
 import rogue.game.message.MessageHandler;
 import rogue.game.state.InputBuffer.Input;
 import rogue.map.GameMap;
@@ -26,7 +27,7 @@ public class GameState implements Runnable {
 	public static void main(String[] args) {
 		List<Client> clients = new LinkedList<Client>();
 		for (int i = 0; i < 2; i++) {
-			clients.add(new EchoClient());
+			clients.add(new MapViewerClient());
 		}
 		new Thread(new GameState(clients)).start();
 	}
@@ -52,7 +53,7 @@ public class GameState implements Runnable {
 	}
 
 	private void pairClientToNewPlayer(Client c) {
-		Player player = new Player();
+		Player player = new Player(new Position(0, 0));
 		handler.notifyCreation(player);
 
 		Entry<Client, Player> entry = new AbstractMap.SimpleEntry<>(c, player);
