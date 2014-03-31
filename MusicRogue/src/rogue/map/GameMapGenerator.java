@@ -2,6 +2,7 @@ package rogue.map;
 
 import java.util.Random;
 
+import rogue.entity.Entity;
 import rogue.entity.EnvironmentEntity;
 
 public class GameMapGenerator {
@@ -102,8 +103,8 @@ public class GameMapGenerator {
 		return mapBottomLayer;
 	}
 
-	public static EnvironmentEntity[][] generateTopLayer(int x) {
-		EnvironmentEntity[][] mapTopLayer = new EnvironmentEntity[x][x];
+	public static Entity[][] generateTopLayer(int x) {
+		Entity[][] mapTopLayer = new Entity[x][x];
 		return mapTopLayer;
 	}
 

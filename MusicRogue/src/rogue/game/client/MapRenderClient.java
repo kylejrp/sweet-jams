@@ -7,12 +7,11 @@ import java.util.logging.Logger;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
-import org.newdawn.slick.Game;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.geom.Shape;
 import org.newdawn.slick.geom.Rectangle;
+import org.newdawn.slick.geom.Shape;
 
 import rogue.entity.Entity;
 import rogue.entity.EnvironmentEntity;
@@ -29,7 +28,6 @@ public class MapRenderClient extends Client {
 			List<Client> clients = new LinkedList<Client>();
 			clients.add(new MapRenderClient(renderer));	
 			new Thread(new GameState(clients)).start();
-			
 			appgc = new AppGameContainer(renderer);
 			appgc.setDisplayMode(512, 512, false);
 			appgc.start();
@@ -97,7 +95,6 @@ class MapRenderer extends BasicGame {
 			for (Entity[] row : entityLayer) {
 				for (Entity element : row) {
 					if (element != null) {
-						System.out.println("NONNULL");
 						int x = element.getPosition().getX();
 						int y = element.getPosition().getY();
 						Shape square = new Rectangle(x * SCALE, y * SCALE,
