@@ -65,7 +65,7 @@ public class GameState implements Runnable {
 	private void placePlayers() {
 		for (Entry<Client, Player> entry : clientPlayerPairs) {
 			Player p = entry.getValue();
-			p.setPosition(map.getSpawnSquare());
+			map.put(p, map.getSpawnSquare());
 		}
 		handler.notifyPositions(map.getEntityLayer());
 	}
@@ -97,13 +97,10 @@ public class GameState implements Runnable {
 			Player p = entry.getValue();
 			Input input = p.getBuffer().readInput();
 			if (validMovement(p, input)) {
-				p.setPosition(Position.calcPosition(p.getPosition(), input));
+				map.move(p, Position.calcPosition(p.getPosition(), input));
 			}
 		}
 		handler.notifyPositions(map.getEntityLayer());
-
-		// Check if a movement is valid if (validMovement(players[i], input)) {
-		// Move the player to the new position
 	}
 
 	private boolean validMovement(Player player, Input input) {

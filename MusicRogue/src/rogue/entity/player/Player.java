@@ -7,7 +7,6 @@ import rogue.game.state.InputBuffer;
 import rogue.map.Position;
 
 public class Player extends Entity{
-	private Position position;
 	private InputBuffer buffer;
 	
 	
