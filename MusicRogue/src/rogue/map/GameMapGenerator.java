@@ -5,7 +5,7 @@ import java.util.Random;
 import rogue.entity.EnvironmentEntity;
 
 public class GameMapGenerator {
-	private static Random randomInt = new Random(200L);
+	private static Random randomInt = new Random();
 
 	private static int getRandomDimension(int min, int max) {
 		int value = Math.abs(randomInt.nextInt(max - 1));
