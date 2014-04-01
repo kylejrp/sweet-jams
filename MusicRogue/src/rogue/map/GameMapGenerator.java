@@ -25,7 +25,7 @@ public class GameMapGenerator {
 			for (int j = startX; j < startX + length && j < map.length; j++) {
 				Position position = new Position(j, i);
 				EnvironmentEntity ground = new EnvironmentEntity(
-						EnvironmentEntity.environmentType.FLOOR, position);
+						EnvironmentEntity.EnvironmentType.FLOOR, position);
 				map[i][j] = ground;
 			}
 		}
@@ -50,7 +50,7 @@ public class GameMapGenerator {
 			{
 				Position position = new Position(j, i);
 				EnvironmentEntity ground = new EnvironmentEntity(
-					EnvironmentEntity.environmentType.FLOOR, position);
+					EnvironmentEntity.EnvironmentType.FLOOR, position);
 				map[i][j] = ground;
 			}
 		}
@@ -63,7 +63,7 @@ public class GameMapGenerator {
 				if (map[i][j] == null) {
 					Position position = new Position(j, i);
 					EnvironmentEntity ground = new EnvironmentEntity(
-							EnvironmentEntity.environmentType.WALL, position);
+							EnvironmentEntity.EnvironmentType.WALL, position);
 					map[i][j] = ground;
 				}
 			}
@@ -71,25 +71,25 @@ public class GameMapGenerator {
 		for (int i = 0; i < x; i++) {
 			Position position = new Position(0, i);
 			EnvironmentEntity ground = new EnvironmentEntity(
-					EnvironmentEntity.environmentType.WALL, position);
+					EnvironmentEntity.EnvironmentType.WALL, position);
 			map[i][0] = ground;
 		}
 		for (int i = 0; i < x; i++) {
 			Position position = new Position(x-1, i);
 			EnvironmentEntity ground = new EnvironmentEntity(
-					EnvironmentEntity.environmentType.WALL, position);
+					EnvironmentEntity.EnvironmentType.WALL, position);
 			map[i][x - 1] = ground;
 		}
 		for (int i = 0; i < x; i++) {
 			Position position = new Position(i, 0);
 			EnvironmentEntity ground = new EnvironmentEntity(
-					EnvironmentEntity.environmentType.WALL, position);
+					EnvironmentEntity.EnvironmentType.WALL, position);
 			map[0][i] = ground;
 		}
 		for (int i = 0; i < x; i++) {
 			Position position = new Position(i, x-1);
 			EnvironmentEntity ground = new EnvironmentEntity(
-					EnvironmentEntity.environmentType.WALL, position);
+					EnvironmentEntity.EnvironmentType.WALL, position);
 			map[x - 1][i] = ground;
 		}
 	}

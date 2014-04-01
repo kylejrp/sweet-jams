@@ -26,7 +26,7 @@ public abstract class Client extends Observable implements Observer {
 	public abstract void recieveMessage(Message msg);
 	
 	public void sendInput(Input input){
-		hasChanged();
+		setChanged();
 		notifyObservers(input);
 	}
 	

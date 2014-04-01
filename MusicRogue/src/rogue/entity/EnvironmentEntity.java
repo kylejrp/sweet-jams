@@ -1,7 +1,6 @@
 package rogue.entity;
 
 import org.newdawn.slick.Color;
-import org.newdawn.slick.Renderable;
 
 import rogue.map.Position;
 
@@ -9,13 +8,16 @@ public class EnvironmentEntity extends Entity{
 
 	private char charRep;
 	private Color color;
-
-	public enum environmentType {
+	private EnvironmentType type;
+	
+	public enum EnvironmentType {
 		WALL, HALLWAY, FLOOR
 	}
 
-	public EnvironmentEntity(environmentType t, Position position) {
+	public EnvironmentEntity(EnvironmentType t, Position position) {
 		super(position);
+		this.type = t;
+		
 		switch (t) {
 		case WALL:
 			charRep = '#';
@@ -32,6 +34,10 @@ public class EnvironmentEntity extends Entity{
 		default:
 			break;
 		}
+	}
+	
+	public EnvironmentType getType(){
+		return type;
 	}
 
 	@Override
