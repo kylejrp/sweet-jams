@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -74,11 +75,12 @@ class MapRenderer extends BasicGame {
 	Client client;
 	List<Entity> entities;
 	float scale = 8f;
-	private Sound boof;
+	private float fade;
 
 	public MapRenderer(String title) {
 		super(title);
 		entities = new ArrayList<Entity>();
+		fade = 1.0f;
 	}
 
 	public void setClient(MapRenderClient client) {
@@ -93,6 +95,7 @@ class MapRenderer extends BasicGame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		fade = 1.0f;
 	}
 
 	public void setMap(GameMap map) {
@@ -103,17 +106,23 @@ class MapRenderer extends BasicGame {
 	@Override
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
+		Shape bg = new Rectangle(0,0,512,512);
+		g.setColor(new Color(30,0,0));
+		g.fill(bg);
 		if (map != null) {
+			Shape square = new Rectangle(1 * scale, 1 * scale,
+					1f * scale, 1f * scale);
 			EnvironmentEntity[][] environmentLayer = map.getEnvironmentLayer();
 			for (EnvironmentEntity[] row : environmentLayer) {
 				for (EnvironmentEntity element : row) {
-					if (element != null) {
+					if (element != null && element.getType() != EnvironmentEntity.EnvironmentType.FLOOR) {
 						int x = element.getPosition().getX();
 						int y = element.getPosition().getY();
-						Shape square = new Rectangle(x * scale, y * scale,
-								1f * scale, 1f * scale);
-						g.setColor(element.getColor());
+						square.setLocation(x*scale, y*scale);
+						g.setColor(element.getColor().scaleCopy(fade));
 						g.fill(square);
+						g.setColor(element.getColor());
+						g.draw(square);
 					}
 				}
 			}
@@ -122,8 +131,7 @@ class MapRenderer extends BasicGame {
 				if (element != null && element.getPosition() != null) {
 					int x = element.getPosition().getX();
 					int y = element.getPosition().getY();
-					Shape square = new Rectangle(x * scale, y * scale,
-							1f * scale, 1f * scale);
+					square.setLocation(x*scale, y*scale);
 					g.setColor(element.getColor());
 					g.fill(square);
 				}
@@ -138,9 +146,8 @@ class MapRenderer extends BasicGame {
 	}
 
 	@Override
-	public void update(GameContainer arg0, int arg1) throws SlickException {
-		// TODO Auto-generated method stub
-
+	public void update(GameContainer container, int delta) throws SlickException {
+		fade *= 0.9995;
 	}
 
 	@Override
