@@ -7,6 +7,7 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.Sound;
 import org.newdawn.slick.geom.Rectangle;
@@ -101,15 +102,29 @@ public class MapRenderer extends BasicGame {
 					InputBuffer buffer = player.getBuffer();
 					Object[] inputs = buffer.toArray();
 					float xPos = 0.0f;
+					Image keyImage;
 					for (Object obj : inputs) {
 						InputBuffer.Input in = (InputBuffer.Input) obj;
-						square.setLocation(xPos, scale * 15);
-						g.setColor(Color.black);
-						g.fill(square);
-						g.setColor(Color.white);
-						g.draw(square);
-						g.drawString(in.toString(), xPos, scale * 15);
-						xPos += scale;
+						switch (in) {
+						case UP:
+							keyImage = IMG_KEY_UP;
+							break;
+						case DOWN:
+							keyImage = IMG_KEY_DOWN;
+							break;
+						case LEFT:
+							keyImage = IMG_KEY_LEFT;
+							break;
+						case RIGHT:
+							keyImage = IMG_KEY_RIGHT;
+							break;
+						default:
+							keyImage = IMG_KEY_BLANK;
+							break;
+						}
+						
+						g.drawImage(keyImage, xPos, 512-KEYWIDTH);
+						xPos += KEYWIDTH;
 					}
 
 				}
@@ -118,9 +133,23 @@ public class MapRenderer extends BasicGame {
 		}
 	}
 
+	private Image IMG_KEY_UP;
+	private Image IMG_KEY_DOWN;
+	private Image IMG_KEY_LEFT;
+	private Image IMG_KEY_RIGHT;
+	private Image IMG_KEY_BLANK;
+	final int KEYWIDTH = 50;
+	
 	@Override
 	public void init(GameContainer arg0) throws SlickException {
 		SoundStore.get().setMaxSources(32);
+		IMG_KEY_UP = new Image("res/Keyboard_White_Arrow_Up.png").getScaledCopy(KEYWIDTH, KEYWIDTH);
+		IMG_KEY_DOWN = new Image("res/Keyboard_White_Arrow_Down.png").getScaledCopy(KEYWIDTH, KEYWIDTH);
+		IMG_KEY_LEFT = new Image("res/Keyboard_White_Arrow_Left.png").getScaledCopy(KEYWIDTH, KEYWIDTH);
+		IMG_KEY_RIGHT = new Image("res/Keyboard_White_Arrow_Right.png").getScaledCopy(KEYWIDTH, KEYWIDTH);
+		IMG_KEY_BLANK = new Image("res/Blank_White_Normal.png").getScaledCopy(KEYWIDTH, KEYWIDTH);
+
+		
 	}
 
 	@Override
