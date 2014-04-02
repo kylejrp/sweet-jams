@@ -23,4 +23,9 @@ public class MapViewerClient extends Client {
 		}
 	}
 
+	@Override
+	public void run() {
+		System.out.println("MapViewerClient started.");
+	}
+
 }
