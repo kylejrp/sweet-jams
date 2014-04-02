@@ -58,12 +58,6 @@ public class EnvironmentEntity extends Entity{
 
 	}
 
-	@Override
-	public void draw(float x, float y) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public char getCharRep() {
 		return charRep;
 	}
