@@ -28,6 +28,7 @@ public class MapRenderer extends BasicGame {
 	List<Entity> entities;
 	float scale = 8f;
 	private float fade;
+	private boolean updated = false;
 
 	public MapRenderer(String title) {
 		super(title);
@@ -41,12 +42,7 @@ public class MapRenderer extends BasicGame {
 
 	public void setEntities(List<Entity> entities) {
 		this.entities = entities;
-		try {
-			new Sound("res/boof.ogg").play();
-		} catch (SlickException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		updated = true;
 		fade = 1.0f;
 		rotate += 0.5f;
 	}
@@ -61,10 +57,11 @@ public class MapRenderer extends BasicGame {
 	@Override
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
+		g.setAntiAlias(true);
 		Shape bg = new Rectangle(0, 0, 512, 512);
 		g.setColor(new Color(30, 0, 0));
 		g.fill(bg);
-		// g.rotate(256, 256, rotate);
+		g.rotate(256, 256, rotate);
 		if (map != null) {
 			Shape square = new Rectangle(1 * scale, 1 * scale, 1f * scale,
 					1f * scale);
@@ -91,10 +88,11 @@ public class MapRenderer extends BasicGame {
 					square.setLocation(x * scale, y * scale);
 					g.setColor(element.getColor());
 					g.fill(square);
+					g.draw(square);
 				}
 			}
 
-			g.resetTransform();
+			// g.resetTransform();
 
 			for (Entity element : entities) {
 				if (element instanceof Player) {
@@ -122,8 +120,8 @@ public class MapRenderer extends BasicGame {
 							keyImage = IMG_KEY_BLANK;
 							break;
 						}
-						
-						g.drawImage(keyImage, xPos, 512-KEYWIDTH);
+
+						g.drawImage(keyImage, xPos, 512 - KEYWIDTH);
 						xPos += KEYWIDTH;
 					}
 
@@ -138,24 +136,40 @@ public class MapRenderer extends BasicGame {
 	private Image IMG_KEY_LEFT;
 	private Image IMG_KEY_RIGHT;
 	private Image IMG_KEY_BLANK;
+	private Sound SOUND_BOOF;
 	final int KEYWIDTH = 50;
-	
+
 	@Override
 	public void init(GameContainer arg0) throws SlickException {
 		SoundStore.get().setMaxSources(32);
-		IMG_KEY_UP = new Image("res/Keyboard_White_Arrow_Up.png").getScaledCopy(KEYWIDTH, KEYWIDTH);
-		IMG_KEY_DOWN = new Image("res/Keyboard_White_Arrow_Down.png").getScaledCopy(KEYWIDTH, KEYWIDTH);
-		IMG_KEY_LEFT = new Image("res/Keyboard_White_Arrow_Left.png").getScaledCopy(KEYWIDTH, KEYWIDTH);
-		IMG_KEY_RIGHT = new Image("res/Keyboard_White_Arrow_Right.png").getScaledCopy(KEYWIDTH, KEYWIDTH);
-		IMG_KEY_BLANK = new Image("res/Blank_White_Normal.png").getScaledCopy(KEYWIDTH, KEYWIDTH);
+		SOUND_BOOF = new Sound("res/boof.ogg");
+		IMG_KEY_UP = new Image("res/Keyboard_White_Arrow_Up.png")
+				.getScaledCopy(KEYWIDTH, KEYWIDTH);
+		IMG_KEY_DOWN = new Image("res/Keyboard_White_Arrow_Down.png")
+				.getScaledCopy(KEYWIDTH, KEYWIDTH);
+		IMG_KEY_LEFT = new Image("res/Keyboard_White_Arrow_Left.png")
+				.getScaledCopy(KEYWIDTH, KEYWIDTH);
+		IMG_KEY_RIGHT = new Image("res/Keyboard_White_Arrow_Right.png")
+				.getScaledCopy(KEYWIDTH, KEYWIDTH);
+		IMG_KEY_BLANK = new Image("res/Blank_White_Normal.png").getScaledCopy(
+				KEYWIDTH, KEYWIDTH);
 
-		
 	}
 
 	@Override
 	public void update(GameContainer container, int delta)
 			throws SlickException {
 		fade *= 0.9995;
+		if (updated) {
+			SOUND_BOOF.play(getHarmonicFrequency(), 1.0f);
+			updated = false;
+		}
+	}
+
+	private float getHarmonicFrequency() {
+		float[] harmonics = { 1.0f, 1.059f, 1.122f, 1.189f, 1.260f,/* 1.335f,
+				1.414f, 1.498f, 1.587f, 1.682f, 1.782f, 1.888f, 2.0f*/ };
+		return harmonics[(int) Math.floor(Math.random() * harmonics.length)];
 	}
 
 	@Override
