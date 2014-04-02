@@ -39,10 +39,32 @@ public class AIClient extends Client implements Runnable {
 		}
 	}
 
-	
 	@Override
 	public void run() {
 		// Calculate next move (always)
+
+	}
+
+	private void genMovement() {
+		switch (type) {
+		case COLOR:
+			
+			break;
+		case FLASH:
+			
+			break;
+		case ROTATE:
+			
+			break;
+		case SCALE:
+			
+			break;
+		case DEATH:
+			
+			break;
+		default:
+			break;
+		}
 	}
 
 }

@@ -4,6 +4,7 @@ package rogue.map;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import rogue.entity.Entity;
 import rogue.entity.EnvironmentEntity;
@@ -49,7 +50,13 @@ public class GameMap{
 	}
 	
 	public Position getSpawnSquare() {
-		// TODO: Do some big boy calculations here
-		return new Position(4, 4);
+		Random randomInt = new Random() ;
+		int x = randomInt.nextInt(environmentLayer.length) ;
+		int y = randomInt.nextInt(environmentLayer.length) ;
+		while(environmentLayer[x][y].getType() != EnvironmentEntity.EnvironmentType.FLOOR){
+			x = randomInt.nextInt(environmentLayer.length) ;
+			y = randomInt.nextInt(environmentLayer.length) ;
+		}
+		return new Position(x, y);
 	}
 }
