@@ -69,12 +69,6 @@ public class GameState implements Runnable {
 		running = true;
 		while (running) {
 			update();
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 	}
 
@@ -89,7 +83,6 @@ public class GameState implements Runnable {
 	}
 
 	private boolean beatHasElapsed(long delta) {
-		System.out.println(delta);
 		return delta > 500000000L; //120bpm
 	}
 

@@ -96,6 +96,7 @@ class MapRenderer extends BasicGame {
 			e.printStackTrace();
 		}
 		fade = 1.0f;
+		rotate += 0.5f;
 	}
 
 	public void setMap(GameMap map) {
@@ -103,12 +104,15 @@ class MapRenderer extends BasicGame {
 		scale = 512f / (map.getEnvironmentLayer().length);
 	}
 
+	float rotate = 0.0f;
+	
 	@Override
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
 		Shape bg = new Rectangle(0,0,512,512);
 		g.setColor(new Color(30,0,0));
 		g.fill(bg);
+		g.rotate(256,256,rotate);
 		if (map != null) {
 			Shape square = new Rectangle(1 * scale, 1 * scale,
 					1f * scale, 1f * scale);

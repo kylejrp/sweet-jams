@@ -5,7 +5,7 @@ import org.newdawn.slick.Renderable;
 
 import rogue.map.Position;
 
-public abstract class Entity implements Renderable{
+public abstract class Entity{
 	public Entity(Position position){
 		this.position = position;
 	}

@@ -44,12 +44,6 @@ public class Player extends Entity{
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public void draw(float x, float y) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	public Color getColor(){
 		return Color.blue;
