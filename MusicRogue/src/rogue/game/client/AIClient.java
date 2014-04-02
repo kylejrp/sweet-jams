@@ -39,6 +39,7 @@ public class AIClient extends Client implements Runnable {
 		}
 	}
 
+	
 	@Override
 	public void run() {
 		// Calculate next move (always)

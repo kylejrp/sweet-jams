@@ -9,6 +9,7 @@ import rogue.map.Position;
 public abstract class Minion extends Entity {
 	private final MinionType type;
 	
+	
 	public Minion(Position position) {
 		super(position);
 		type = MinionType.getRandomType();
