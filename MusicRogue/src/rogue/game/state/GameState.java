@@ -37,7 +37,10 @@ public class GameState implements Runnable {
 		// clients.add(new AIClient(MinionType.COLOR));
 
 		clientEntityPairs = new ArrayList<>();
-		clients.add(new AIClient(MinionType.COLOR));
+		for(int i = 0; i < 100; i ++){
+			clients.add(new AIClient(MinionType.DEATH));
+		}
+
 		for (Client c : clients) {
 			handler.addObserver(c);
 			pairClientToNewPlayer(c);
@@ -105,6 +108,11 @@ public class GameState implements Runnable {
 		for (Entry<Client, Entity> entry : clientEntityPairs) {
 			Entity e = entry.getValue();
 			Input input = e.getBuffer().readInput();
+			if(e instanceof Player){
+				if(!validMovement(e, input)){
+					running = false;
+				}
+			}
 			if (validMovement(e, input)) {
 				map.move(e, Position.calcPosition(e.getPosition(), input));
 			}

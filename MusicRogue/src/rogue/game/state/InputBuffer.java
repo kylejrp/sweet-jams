@@ -1,6 +1,5 @@
 package rogue.game.state;
 
-import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -43,7 +42,7 @@ public class InputBuffer {
 				calculatedArray = buffer.toArray();
 				if(calculatedArray.length == 0){
 					calculatedArray = new Object[1];
-					calculatedArray[0] = lastMove;
+					calculatedArray[0] = Input.NOMOVE;
 				}
 			}
 			return calculatedArray;
