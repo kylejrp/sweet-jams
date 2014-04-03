@@ -48,7 +48,7 @@ public class MapRenderClient extends Client {
 		AppGameContainer appgc;
 		try {
 			appgc = new AppGameContainer(renderer);
-			appgc.setDisplayMode(512, 512, false);
+			appgc.setDisplayMode(640, 640, false);
 			appgc.start();
 		} catch (SlickException e) {
 			// TODO Auto-generated catch block

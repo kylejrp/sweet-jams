@@ -50,7 +50,6 @@ public class MapRenderer extends BasicGame {
 
 	public void setMap(GameMap map) {
 		this.map = map;
-		scale = 512f / (map.getEnvironmentLayer().length);
 	}
 
 	float rotate = 0.0f;
@@ -58,11 +57,15 @@ public class MapRenderer extends BasicGame {
 	@Override
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
+		float width = container.getScreenWidth();
+		scale = width / (map.getEnvironmentLayer().length);
+
+		
 		g.setAntiAlias(true);
-		Shape bg = new Rectangle(0, 0, 512, 512);
+		Shape bg = new Rectangle(0, 0, width, width);
 		g.setColor(new Color(30, 0, 0));
 		g.fill(bg);
-		g.rotate(256, 256, rotate);
+		g.rotate(width/2, width/2, rotate);
 		if (map != null) {
 			Shape square = new Rectangle(1 * scale, 1 * scale, 1f * scale,
 					1f * scale);
@@ -122,7 +125,7 @@ public class MapRenderer extends BasicGame {
 							break;
 						}
 
-						g.drawImage(keyImage, xPos, 512 - KEYWIDTH);
+						g.drawImage(keyImage, xPos, container.getScreenWidth() - KEYWIDTH);
 						xPos += KEYWIDTH;
 					}
 

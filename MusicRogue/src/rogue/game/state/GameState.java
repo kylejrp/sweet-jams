@@ -26,7 +26,7 @@ public class GameState implements Runnable {
 	private long timeOfLastUpdate;
 	private long delta;
 
-	private final int MAP_SIZE = 16;
+	private final int MAP_SIZE = 24;
 
 	public GameState(List<Client> clients) {
 		// Add clients to the MessageHandler, only talk with them through the
