@@ -29,6 +29,7 @@ public class AIClient extends Client implements Runnable {
 		this.type = type;
 		inputDigit = 0;
 		running = true;
+		needToSendInput = false;
 		new Thread(this).start();
 	}
 
@@ -48,6 +49,7 @@ public class AIClient extends Client implements Runnable {
 				&& msg.getDetail() == Message.MessageDetail.UPDATE) {
 			entities = (List<Entity>) msg.getObject();
 			needToSendInput = true;
+			System.out.println("UPDATE RECIEVED");
 		} else if (msg.getObject() instanceof Entry<?, ?>
 		&& msg.getDetail() == MessageDetail.CREATE) {
 			Client client = (Client) ((Entry) msg.getObject()).getKey();
@@ -67,6 +69,12 @@ public class AIClient extends Client implements Runnable {
 			if (needToSendInput) {
 				nextInput = genMovement();
 				sendInput(nextInput);
+				needToSendInput = false;
+			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// Recieved an update!
 			}
 		}
 

@@ -6,18 +6,12 @@ import rogue.entity.Entity;
 import rogue.game.state.InputBuffer;
 import rogue.map.Position;
 
-public class Player extends Entity{
-	private InputBuffer buffer;
-	
+public class Player extends Entity{	
 	
 	public Player(Position position){
 		super(position);
-		buffer = new InputBuffer(4);
 	}
 
-	public InputBuffer getBuffer() {
-		return buffer;
-	}
 	
 	public Position getPosition() {
 		return position;

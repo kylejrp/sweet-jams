@@ -5,9 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import rogue.entity.Entity;
 import rogue.entity.EnvironmentEntity;
+import rogue.entity.badguys.Minion;
+import rogue.entity.badguys.Minion.MinionType;
 import rogue.entity.player.Player;
+import rogue.game.client.AIClient;
 import rogue.game.client.Client;
+import rogue.game.client.MapRenderClient;
 import rogue.game.message.MessageHandler;
 import rogue.game.state.InputBuffer.Input;
 import rogue.map.GameMap;
@@ -17,7 +22,7 @@ public class GameState implements Runnable {
 	private MessageHandler handler;
 	private boolean running;
 	private GameMap map;
-	private List<Entry<Client, Player>> clientPlayerPairs;
+	private List<Entry<Client, Entity>> clientEntityPairs;
 	private long timeOfLastUpdate;
 	private long delta;
 
@@ -29,8 +34,10 @@ public class GameState implements Runnable {
 		handler = new MessageHandler(this);
 
 		// TODO: send server info
+		// clients.add(new AIClient(MinionType.COLOR));
 
-		clientPlayerPairs = new ArrayList<>();
+		clientEntityPairs = new ArrayList<>();
+		clients.add(new AIClient(MinionType.COLOR));
 		for (Client c : clients) {
 			handler.addObserver(c);
 			pairClientToNewPlayer(c);
@@ -45,27 +52,34 @@ public class GameState implements Runnable {
 	}
 
 	private void pairClientToNewPlayer(Client c) {
-		Player player = new Player(null);
-		Entry<Client, Player> entry = new AbstractMap.SimpleEntry<>(c, player);
-		
-		clientPlayerPairs.add(entry);
+		Entity e;
+		if (c instanceof MapRenderClient) {
+			e = new Player(null);
+		} else if (c instanceof AIClient) {
+			e = new Minion(null);
+		} else {
+			e = new Minion(null);
+		}
+		Entry<Client, Entity> entry = new AbstractMap.SimpleEntry<>(c, e);
+
+		clientEntityPairs.add(entry);
 		handler.notifyCreation(entry);
 	}
 
 	// Place players on map
 	// Link players with a client
 	private void placePlayers() {
-		for (Entry<Client, Player> entry : clientPlayerPairs) {
-			Player p = entry.getValue();
-			map.put(p, map.getSpawnSquare());
+		for (Entry<Client, Entity> entry : clientEntityPairs) {
+			Entity e = entry.getValue();
+			map.put(e, map.getSpawnSquare());
 		}
-		handler.notifyUpdate(map.getEntities());
+		//handler.notifyUpdate(map.getEntities());
 	}
 
 	@Override
 	public void run() {
 		timeOfLastUpdate = System.nanoTime();
-		
+
 		running = true;
 		while (running) {
 			update();
@@ -83,23 +97,23 @@ public class GameState implements Runnable {
 	}
 
 	private boolean beatHasElapsed(long delta) {
-		return delta > 500000000L; //120bpm
+		return delta > 500000000L; // 120bpm
 	}
 
 	private void movePlayers() {
 		// Read each player's input buffer
-		for (Entry<Client, Player> entry : clientPlayerPairs) {
-			Player p = entry.getValue();
-			Input input = p.getBuffer().readInput();
-			if (validMovement(p, input)) {
-				map.move(p, Position.calcPosition(p.getPosition(), input));
+		for (Entry<Client, Entity> entry : clientEntityPairs) {
+			Entity e = entry.getValue();
+			Input input = e.getBuffer().readInput();
+			if (validMovement(e, input)) {
+				map.move(e, Position.calcPosition(e.getPosition(), input));
 			}
 		}
 		handler.notifyUpdate(map.getEntities());
 	}
 
-	private boolean validMovement(Player player, Input input) {
-		Position newPos = Position.calcPosition(player.getPosition(), input);
+	private boolean validMovement(Entity e, Input input) {
+		Position newPos = Position.calcPosition(e.getPosition(), input);
 		EnvironmentEntity placeWeWantToMove = map.getEnvironmentLayer()[newPos
 				.getY()][newPos.getX()];
 		return placeWeWantToMove.getType().equals(
@@ -112,7 +126,7 @@ public class GameState implements Runnable {
 
 	// Finds the input buffer if it exists, returns null otherwise
 	public InputBuffer getInputBuffer(Client client) {
-		for (Entry<Client, Player> entry : clientPlayerPairs) {
+		for (Entry<Client, Entity> entry : clientEntityPairs) {
 			if (entry.getKey().equals(client)) {
 				return entry.getValue().getBuffer();
 			}

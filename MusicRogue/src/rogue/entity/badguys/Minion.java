@@ -6,7 +6,7 @@ import rogue.entity.Entity;
 import rogue.entity.badguys.Minion.MinionType;
 import rogue.map.Position;
 
-public abstract class Minion extends Entity {
+public class Minion extends Entity {
 	private final MinionType type;
 	
 	
@@ -36,11 +36,11 @@ public abstract class Minion extends Entity {
 		// TODO Auto-generated method stub
 
 	}
-	
-	public abstract void getInput();
 
 	@Override
-	public abstract Color getColor();
+	public Color getColor(){
+		return Color.green;
+	}
 
 	public static enum MinionType{
 		ROTATE, COLOR, SCALE, FLASH, DEATH;

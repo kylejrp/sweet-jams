@@ -3,14 +3,23 @@ package rogue.entity;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Renderable;
 
+import rogue.game.state.InputBuffer;
 import rogue.map.Position;
 
 public abstract class Entity{
+	private InputBuffer buffer;
+	protected Position position;
+
+	
 	public Entity(Position position){
 		this.position = position;
+		buffer = new InputBuffer(4);
+
 	}
 
-	protected Position position;
+	public InputBuffer getBuffer() {
+		return buffer;
+	}
 	
 	public Position getPosition() {
 		return new Position(position.getX(), position.getY());
