@@ -2,6 +2,7 @@ package rogue.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
@@ -71,7 +72,7 @@ public class MapRenderer extends BasicGame {
 		float width = container.getWidth();
 
 		g.setAntiAlias(true);
-		g.scale(Math.max(fade, scaleMin),Math.max(fade, scaleMin));
+		g.scale(Math.max(fade, scaleMin), Math.max(fade, scaleMin));
 		g.rotate(width / 2, width / 2, rotateValue);
 		Shape bg = new Rectangle(0, 0, width, width);
 		g.setColor(new Color(30, 0, 0));
@@ -190,6 +191,8 @@ public class MapRenderer extends BasicGame {
 	private Image IMG_KEY_BLANK;
 	private Sound SOUND_SWEET;
 	private Sound SOUND_JAMS;
+	private Sound SOUND_GAMEOVER;
+	private List<Sound> JAM_LINES;
 	final int KEYWIDTH = 50;
 
 	@Override
@@ -197,6 +200,7 @@ public class MapRenderer extends BasicGame {
 		SoundStore.get().setMaxSources(32);
 		SOUND_JAMS = new Sound("res/jams.wav");
 		SOUND_SWEET = new Sound("res/sweet.wav");
+		SOUND_GAMEOVER = new Sound("res/JamOver.wav");
 		IMG_KEY_UP = new Image("res/Keyboard_White_Arrow_Up.png")
 				.getScaledCopy(KEYWIDTH, KEYWIDTH);
 		IMG_KEY_DOWN = new Image("res/Keyboard_White_Arrow_Down.png")
@@ -207,7 +211,28 @@ public class MapRenderer extends BasicGame {
 				.getScaledCopy(KEYWIDTH, KEYWIDTH);
 		IMG_KEY_BLANK = new Image("res/Blank_White_Normal.png").getScaledCopy(
 				KEYWIDTH, KEYWIDTH);
+		JAM_LINES = new ArrayList<Sound>();
+		JAM_LINES.add(new Sound("res/Bane.wav"));
+		JAM_LINES.add(new Sound("res/Bigger.wav"));
+		JAM_LINES.add(new Sound("res/CantStop.wav"));
+		JAM_LINES.add(new Sound("res/Combo.wav"));
+		JAM_LINES.add(new Sound("res/Factoring.wav"));
+		JAM_LINES.add(new Sound("res/Fus.wav"));
+		JAM_LINES.add(new Sound("res/Handle.wav"));
+		JAM_LINES.add(new Sound("res/HoldOn.wav"));
+		JAM_LINES.add(new Sound("res/Moist.wav"));
+		JAM_LINES.add(new Sound("res/PBJam.wav"));
+		JAM_LINES.add(new Sound("res/Pity.wav"));
+		JAM_LINES.add(new Sound("res/Pump.wav"));
+		JAM_LINES.add(new Sound("res/Silence.wav"));
+		JAM_LINES.add(new Sound("res/Suculent.wav"));
+		JAM_LINES.add(new Sound("res/Ultra.wav"));
 
+	}
+
+	private Sound getRandomLine() {
+		Random r = new Random();
+		return JAM_LINES.get(r.nextInt(JAM_LINES.size()));
 	}
 
 	private boolean sweetbool = true;
@@ -216,19 +241,26 @@ public class MapRenderer extends BasicGame {
 	private float scaleMin = 1.0f;
 	private float flashValue;
 	private float timeSinceLastUpdate = 0;
+	private float countdownToCheezyLine = 10000f;
 
 	@Override
 	public void update(GameContainer container, int delta)
 			throws SlickException {
 
 		timeSinceLastUpdate += delta;
+		if (introtext == false) {
+			countdownToCheezyLine -= delta;
+		}
+		if (countdownToCheezyLine <= 0) {
+			countdownToCheezyLine = 10000f;
+		}
 		fade = Math.max((500f - timeSinceLastUpdate / 2) / 500f, 0f);
 		if (flashValue > 0f) {
 			flashValue = Math.max((500f - timeSinceLastUpdate) / 500f, 0f);
 		}
-		
+
 		rotateValue += delta * rotateVelocity;
-		
+
 		if (updated) {
 			if (sweetbool) {
 				sweetbool = false;
@@ -278,6 +310,13 @@ public class MapRenderer extends BasicGame {
 		case org.newdawn.slick.Input.KEY_SPACE:
 		case org.newdawn.slick.Input.KEY_ENTER:
 			client.notifyGameStart();
+			try {
+				SOUND_SWEET = new Sound("res/boof.ogg");
+			} catch (SlickException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			SOUND_JAMS = SOUND_SWEET;
 			introtext = false;
 		default:
 			break;
@@ -302,12 +341,19 @@ public class MapRenderer extends BasicGame {
 
 	public void setRunning(boolean b) {
 		running = b;
+		if (b == false){
+			SOUND_GAMEOVER.play();
+		}
 	}
 
 	public void handleCollision(MinionType minionType) {
+		if (minionType != MinionType.DEATH) {
+			getRandomLine().play();
+		}
+
 		switch (minionType) {
 		case ROTATE:
-			if(rotateVelocity == 0.0f){
+			if (rotateVelocity == 0.0f) {
 				rotateVelocity = 0.01f;
 			}
 			rotateVelocity *= 1.1f;

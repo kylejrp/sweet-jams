@@ -166,6 +166,7 @@ public class GameState implements Runnable {
 						handler.notifyDestruction(new Minion(m));
 						if(m.getMinionType() == MinionType.SPEED){
 							beatTime /= 1.2; // Speed is 20% faster
+							Math.max(beatTime, 250000000);
 						} else if (m.getMinionType() == MinionType.DEATH){
 							running = false;
 							handler.notifyDestruction(this);
