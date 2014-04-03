@@ -38,16 +38,17 @@ public class AIClient extends Client implements Runnable {
 		nextInput = Input.NOMOVE;
 
 		if (msg.getObject() instanceof GameMap
-				&& msg.getDetail() == Message.MessageDetail.CREATE) {
+				&& msg.getDetail() == MessageDetail.CREATE) {
 			GameMap map = (GameMap) msg.getObject();
 			this.map = map;
-		} else if (msg.getObject() instanceof Entity
-				&& msg.getDetail() == Message.MessageDetail.CREATE) {
-			myEntity = (Minion) msg.getObject();
-			type = myEntity.getMinionType();
 		} else if (msg.getObject() instanceof List<?>
-				&& msg.getDetail() == Message.MessageDetail.UPDATE) {
+				&& msg.getDetail() == MessageDetail.UPDATE) {
 			entities = (List<Entity>) msg.getObject();
+			for(Entity e : entities){
+				if(myEntity.equals(e)){
+					myEntity = (Minion) e;
+				}
+			}
 			needToSendInput = true;
 		} else if (msg.getObject() instanceof Entry<?, ?>
 		&& msg.getDetail() == MessageDetail.CREATE) {
@@ -55,10 +56,9 @@ public class AIClient extends Client implements Runnable {
 			if (client.clientNumber == this.clientNumber) {
 				myEntity = (Minion) (((Entry) msg.getObject()).getValue());
 			}
-		} 
-		
-		// TODO: Check for entity death
-
+		} if (msg.getObject() instanceof Minion && msg.getDetail() == MessageDetail.DESTROY && ((Minion) msg.getObject()).equals(myEntity)) {
+			running = false;
+		}
 	}
 
 	@Override
@@ -80,6 +80,10 @@ public class AIClient extends Client implements Runnable {
 	}
 
 	private Input genMovement() {
+		if(myEntity.getPosition() == null){
+			return Input.NOMOVE;
+		}
+		
 		Player player = null;
 		for(Entity e : entities){
 			if (e instanceof Player){
@@ -95,7 +99,9 @@ public class AIClient extends Client implements Runnable {
 			Input bestMove = Input.NOMOVE ;
 			double closestSoFar = Double.MAX_VALUE;
 			for( Input i : Input.class.getEnumConstants()){
-				double potentialDistance = findEuclideanDistance(Position.calcPosition(myEntity.getPosition(), i), player);
+				double potentialDistance = findEuclideanDistance(
+						Position.calcPosition(myEntity.getPosition(), i),
+						player);
 				if( potentialDistance < closestSoFar){
 					closestSoFar = potentialDistance;
 					bestMove = i;

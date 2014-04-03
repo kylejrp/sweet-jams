@@ -33,5 +33,13 @@ public abstract class Client extends Observable implements Observer, Runnable {
 	public String toString(){
 		return this.getClass().getSimpleName() + "("+ clientNumber + ")";
 	}
+	
+	public boolean equals(Object obj){
+		if (obj instanceof Client){
+			return clientNumber == ((Client) obj).clientNumber;
+		} else {
+			return false;
+		}
+	}
 
 }

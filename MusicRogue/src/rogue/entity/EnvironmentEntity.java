@@ -6,23 +6,20 @@ import rogue.map.Position;
 
 public class EnvironmentEntity extends Entity{
 
-	private char charRep;
-	private Color color;
-	private EnvironmentType type;
+	final private char charRep;
+	final private Color color;
+	final private EnvironmentType type;
 	
 	public enum EnvironmentType {
 		WALL, HALLWAY, FLOOR
 	}
 
 	public EnvironmentEntity(EnvironmentType t, Position position) {
-		super(position);
+		super();
 		this.type = t;
+		this.position = position;
 		
 		switch (t) {
-		case WALL:
-			charRep = '#';
-			color = Color.red;
-			break;
 		case HALLWAY:
 			charRep = '%';
 			color = Color.gray;
@@ -31,7 +28,10 @@ public class EnvironmentEntity extends Entity{
 			charRep = '.';
 			color = Color.black;
 			break;
+		case WALL:
 		default:
+			charRep = '#';
+			color = Color.red;
 			break;
 		}
 	}

@@ -9,6 +9,7 @@ import rogue.game.client.Client;
 import rogue.game.message.Message.MessageDetail;
 import rogue.game.message.Message.MessageType;
 import rogue.game.state.GameState;
+import rogue.game.state.InputBuffer;
 import rogue.game.state.InputBuffer.Input;
 import rogue.map.GameMap;
 
@@ -67,7 +68,7 @@ public class MessageHandler extends Observable implements Observer {
 			msg = new Message(MessageType.ERROR);
 		}
 
-		msg.setDetail(MessageDetail.CREATE);
+		msg.setDetail(MessageDetail.DESTROY);
 		msg.setObject(destroyedObject);
 
 		setChanged();
@@ -81,7 +82,10 @@ public class MessageHandler extends Observable implements Observer {
 		Client client = (Client) obs;
 		Input input = (Input) obj;
 
-		game.getInputBuffer(client).addInput(input);
+		InputBuffer buffer = game.getInputBuffer(client);
+		if(null != buffer) {
+			buffer.addInput(input);
+		}
 
 	}
 }

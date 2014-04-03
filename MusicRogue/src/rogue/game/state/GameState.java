@@ -36,7 +36,7 @@ public class GameState implements Runnable {
 		// clients.add(new AIClient(MinionType.COLOR));
 
 		clientEntityPairs = new ArrayList<>();
-		for(int i = 0; i < 10; i ++){
+		for(int i = 0; i < 1000; i ++){
 			clients.add(new AIClient());
 		}
 
@@ -48,26 +48,30 @@ public class GameState implements Runnable {
 
 		// Generate map and tell clients
 		map = new GameMap(MAP_SIZE);
-		handler.notifyCreation(map);
+		GameMap mapCopy = new GameMap(map);
+		handler.notifyCreation(mapCopy);
 
 		placePlayers();
 	}
 
-	private void pairClientToNewPlayer(Client c) {
+	private void pairClientToNewPlayer(Client c) {		
 		Entity e;
+		Entity eCopy;
 		if (c instanceof MapRenderClient) {
-			e = new Player(null);
-		} else if (c instanceof AIClient) {
-			Minion m = new Minion(null);
-			e = m; //c^2
-			((AIClient) c).setType(m.getMinionType());
+			e = new Player();
+			eCopy = new Player((Player) e);
 		} else {
-			e = new Minion(null);
+			e = new Minion();
+			eCopy = new Minion((Minion) e);
+			if (c instanceof AIClient) {
+				((AIClient) c).setType(((Minion)e).getMinionType());
+			}
 		}
 		Entry<Client, Entity> entry = new AbstractMap.SimpleEntry<>(c, e);
-
+		Entry<Client, Entity> entryCopy = new AbstractMap.SimpleImmutableEntry<>(c, eCopy);
+		
 		clientEntityPairs.add(entry);
-		handler.notifyCreation(entry);
+		handler.notifyCreation(new AbstractMap.SimpleEntry<Client, Entity>(entryCopy));
 	}
 
 	// Place players on map
@@ -118,7 +122,38 @@ public class GameState implements Runnable {
 				map.move(e, Position.calcPosition(e.getPosition(), input));
 			}
 		}
-		handler.notifyUpdate(map.getEntities());
+
+		checkCollision();
+		handler.notifyUpdate(new GameMap(map).getEntities());
+	}
+
+	private void checkCollision() {
+		Player p = null;
+		List<Minion> badguys = new ArrayList<Minion>();
+		for(Entry<Client, Entity> entry : clientEntityPairs){
+			Entity e = entry.getValue();
+			if(e instanceof Player){
+				p = (Player) e;
+			} else if (e instanceof Minion){
+				badguys.add((Minion) e);
+			}
+		}
+		
+		for(Minion m : badguys){
+			if(m.getPosition().equals(p.getPosition())){
+				//notifyCollision(m.getMinionType());
+				for(Entry<Client, Entity> entry : clientEntityPairs){
+					if(entry.getValue() == m){
+						handler.notifyDestruction(new Minion(m));
+						clientEntityPairs.remove(entry);
+						map.remove(m);
+						break;
+					}
+				}
+			}
+		}
+		
+		
 	}
 
 	private boolean validMovement(Entity e, Input input) {

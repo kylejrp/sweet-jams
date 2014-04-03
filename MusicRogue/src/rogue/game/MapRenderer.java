@@ -41,14 +41,18 @@ public class MapRenderer extends BasicGame {
 	}
 
 	public void setEntities(List<Entity> entities) {
-		this.entities = entities;
+		synchronized (entities) {
+			this.entities = entities;
+		}
 		updated = true;
 		fade = 1.0f;
 		rotate += 0.5f;
 	}
 
 	public void setMap(GameMap map) {
-		this.map = map;
+		synchronized (map) {
+			this.map = map;
+		}
 	}
 
 	float rotate = 0.0f;
@@ -57,7 +61,6 @@ public class MapRenderer extends BasicGame {
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
 		float width = container.getWidth();
-		float scale = width / (map.getEnvironmentLayer().length);
 
 		g.setAntiAlias(true);
 		Shape bg = new Rectangle(0, 0, width, width);
@@ -65,71 +68,77 @@ public class MapRenderer extends BasicGame {
 		g.fill(bg);
 		g.rotate(width / 2, width / 2, rotate);
 		if (map != null) {
+			float scale = width / (map.getEnvironmentLayer().length);
 			Shape square = new Rectangle(1 * scale, 1 * scale, 1f * scale,
 					1f * scale);
-			EnvironmentEntity[][] environmentLayer = map.getEnvironmentLayer();
-			for (EnvironmentEntity[] row : environmentLayer) {
-				for (EnvironmentEntity element : row) {
-					if (element != null
-							&& element.getType() != EnvironmentEntity.EnvironmentType.FLOOR) {
+			synchronized (map) {
+				EnvironmentEntity[][] environmentLayer = map
+						.getEnvironmentLayer();
+				for (EnvironmentEntity[] row : environmentLayer) {
+					for (EnvironmentEntity element : row) {
+						if (element != null
+								&& element.getType() != EnvironmentEntity.EnvironmentType.FLOOR) {
+							int x = element.getPosition().getX();
+							int y = element.getPosition().getY();
+							square.setLocation(x * scale, y * scale);
+							g.setColor(element.getColor().scaleCopy(fade));
+							g.fill(square);
+							g.setColor(element.getColor());
+							g.draw(square);
+						}
+					}
+				}
+			}
+			synchronized (entities) {
+
+				for (Entity element : entities) {
+					if (element != null && element.getPosition() != null) {
 						int x = element.getPosition().getX();
 						int y = element.getPosition().getY();
 						square.setLocation(x * scale, y * scale);
-						g.setColor(element.getColor().scaleCopy(fade));
-						g.fill(square);
 						g.setColor(element.getColor());
+						if (element instanceof Player) {
+							g.fill(square);
+						}
 						g.draw(square);
 					}
 				}
-			}
 
-			for (Entity element : entities) {
-				if (element != null && element.getPosition() != null) {
-					int x = element.getPosition().getX();
-					int y = element.getPosition().getY();
-					square.setLocation(x * scale, y * scale);
-					g.setColor(element.getColor());
+				g.resetTransform();
+
+				for (Entity element : entities) {
 					if (element instanceof Player) {
-						g.fill(square);
-					}
-					g.draw(square);
-				}
-			}
+						Player player = (Player) element;
+						InputBuffer buffer = player.getBuffer();
+						Object[] inputs = buffer.toArray();
+						float xPos = 0.0f;
+						Image keyImage;
+						for (Object obj : inputs) {
+							InputBuffer.Input in = (InputBuffer.Input) obj;
+							switch (in) {
+							case UP:
+								keyImage = IMG_KEY_UP;
+								break;
+							case DOWN:
+								keyImage = IMG_KEY_DOWN;
+								break;
+							case LEFT:
+								keyImage = IMG_KEY_LEFT;
+								break;
+							case RIGHT:
+								keyImage = IMG_KEY_RIGHT;
+								break;
+							default:
+								keyImage = IMG_KEY_BLANK;
+								break;
+							}
 
-			g.resetTransform();
-
-			for (Entity element : entities) {
-				if (element instanceof Player) {
-					Player player = (Player) element;
-					InputBuffer buffer = player.getBuffer();
-					Object[] inputs = buffer.toArray();
-					float xPos = 0.0f;
-					Image keyImage;
-					for (Object obj : inputs) {
-						InputBuffer.Input in = (InputBuffer.Input) obj;
-						switch (in) {
-						case UP:
-							keyImage = IMG_KEY_UP;
-							break;
-						case DOWN:
-							keyImage = IMG_KEY_DOWN;
-							break;
-						case LEFT:
-							keyImage = IMG_KEY_LEFT;
-							break;
-						case RIGHT:
-							keyImage = IMG_KEY_RIGHT;
-							break;
-						default:
-							keyImage = IMG_KEY_BLANK;
-							break;
+							g.drawImage(keyImage, xPos, container.getWidth()
+									- KEYWIDTH);
+							xPos += KEYWIDTH;
 						}
 
-						g.drawImage(keyImage, xPos, container.getWidth()
-								- KEYWIDTH);
-						xPos += KEYWIDTH;
 					}
-
 				}
 			}
 
