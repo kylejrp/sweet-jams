@@ -85,9 +85,15 @@ public class AIClient extends Client implements Runnable {
 		switch (type) {
 		case COLOR:
 			// It's coming right for us! (runs right at player)
+			Input bestMove ;
+			double closestSoFar = Double.MAX_VALUE;
 			for (int i = 0; i < inputSequence.length; i++) {
-				if (findEuclideanDistance(myEntity.getPosition()) > findEuclideanDistance(Position
-						.calcPosition(myEntity.getPosition(), inputSequence[i]))) {
+				if(findEuclideanDistance(myEntity.getPosition())<closestSoFar || closestSoFar == Double.MAX_VALUE){
+					closestSoFar = findEuclideanDistance(Position
+							.calcPosition(myEntity.getPosition(), inputSequence[i])) ;
+				}
+				
+				if (findEuclideanDistance(myEntity.getPosition()) > closestSoFar) {
 					return inputSequence[i];
 				}
 			}
@@ -103,7 +109,7 @@ public class AIClient extends Client implements Runnable {
 			return Input.NOMOVE;
 		case DEATH:
 			// Stumbles around randomly.
-			int check = randomInt.nextInt(3);
+			int check = randomInt.nextInt(4);
 			return inputSequence[check];
 		default:
 			break;
