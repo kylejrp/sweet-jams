@@ -19,5 +19,6 @@ public class RunGame {
 		List<Client> clients = new LinkedList<Client>();
 		clients.add(client);
 		new Thread(new GameState(clients)).start();
+		// DON"T REMOVE ME
 	}
 }

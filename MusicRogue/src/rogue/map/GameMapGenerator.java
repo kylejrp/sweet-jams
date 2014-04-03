@@ -45,8 +45,17 @@ public class GameMapGenerator {
 
 	private static void buildCorridors(EnvironmentEntity[][] map)
 	{
-		for (int i = 0; i < map.length; i+=4) {
+		for (int i = 0; i < map.length; i+=3) {
 			for(int j=0; j<map.length; j++)
+			{
+				Position position = new Position(j, i);
+				EnvironmentEntity ground = new EnvironmentEntity(
+					EnvironmentEntity.EnvironmentType.FLOOR, position);
+				map[i][j] = ground;
+			}
+		}
+		for (int i = 0; i < map.length; i++) {
+			for(int j=0; j<map.length; j+=3)
 			{
 				Position position = new Position(j, i);
 				EnvironmentEntity ground = new EnvironmentEntity(
