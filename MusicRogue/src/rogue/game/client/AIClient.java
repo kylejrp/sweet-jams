@@ -49,7 +49,6 @@ public class AIClient extends Client implements Runnable {
 				&& msg.getDetail() == Message.MessageDetail.UPDATE) {
 			entities = (List<Entity>) msg.getObject();
 			needToSendInput = true;
-			System.out.println("UPDATE RECIEVED");
 		} else if (msg.getObject() instanceof Entry<?, ?>
 		&& msg.getDetail() == MessageDetail.CREATE) {
 			Client client = (Client) ((Entry) msg.getObject()).getKey();
