@@ -26,6 +26,7 @@ public class MapRenderer extends BasicGame {
 	GameMap map;
 	Client client;
 	List<Entity> entities;
+	Entity myEntity;
 	float scale = 8f;
 	private float fade;
 	private boolean updated = false;
@@ -92,7 +93,7 @@ public class MapRenderer extends BasicGame {
 				}
 			}
 
-			// g.resetTransform();
+			g.resetTransform();
 
 			for (Entity element : entities) {
 				if (element instanceof Player) {
@@ -136,13 +137,15 @@ public class MapRenderer extends BasicGame {
 	private Image IMG_KEY_LEFT;
 	private Image IMG_KEY_RIGHT;
 	private Image IMG_KEY_BLANK;
-	private Sound SOUND_BOOF;
+	private Sound SOUND_SWEET;
+	private Sound SOUND_JAMS;
 	final int KEYWIDTH = 50;
 
 	@Override
 	public void init(GameContainer arg0) throws SlickException {
 		SoundStore.get().setMaxSources(32);
-		SOUND_BOOF = new Sound("res/boof.ogg");
+		SOUND_JAMS = new Sound("res/jams.wav");
+		SOUND_SWEET = new Sound("res/sweet.wav");
 		IMG_KEY_UP = new Image("res/Keyboard_White_Arrow_Up.png")
 				.getScaledCopy(KEYWIDTH, KEYWIDTH);
 		IMG_KEY_DOWN = new Image("res/Keyboard_White_Arrow_Down.png")
@@ -155,13 +158,21 @@ public class MapRenderer extends BasicGame {
 				KEYWIDTH, KEYWIDTH);
 
 	}
+	
+	private boolean sweetbool = true;
 
 	@Override
 	public void update(GameContainer container, int delta)
 			throws SlickException {
 		fade *= 0.9995;
 		if (updated) {
-			SOUND_BOOF.play(getHarmonicFrequency(), 1.0f);
+			if(sweetbool){
+				sweetbool = false;
+				SOUND_SWEET.play(getHarmonicFrequency(), 1.0f);
+			} else {
+				sweetbool = true;
+				SOUND_JAMS.play(getHarmonicFrequency(), 1.0f);
+			}
 			updated = false;
 		}
 	}
@@ -197,6 +208,10 @@ public class MapRenderer extends BasicGame {
 	}
 
 	public void keyReleased(int key, char c) {
+	}
+
+	public void setEntity(Entity entity) {
+		myEntity = entity;
 	}
 
 }

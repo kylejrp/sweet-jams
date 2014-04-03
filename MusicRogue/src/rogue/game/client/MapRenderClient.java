@@ -1,29 +1,15 @@
 package rogue.game.client;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map.Entry;
 
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.BasicGame;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.Sound;
-import org.newdawn.slick.geom.Rectangle;
-import org.newdawn.slick.geom.Shape;
-import org.newdawn.slick.openal.SoundStore;
 
 import rogue.entity.Entity;
-import rogue.entity.EnvironmentEntity;
 import rogue.game.MapRenderer;
-import rogue.game.MusicRogueGame;
 import rogue.game.message.Message;
-import rogue.game.state.GameState;
+import rogue.game.message.Message.MessageDetail;
 import rogue.map.GameMap;
 
 public class MapRenderClient extends Client {
@@ -48,6 +34,12 @@ public class MapRenderClient extends Client {
 			// Need a better way to check that it is a List<Entity> though
 			List<Entity> entLayer = (List<Entity>) msg.getObject();
 			renderer.setEntities(entLayer);
+		} else if (msg.getObject() instanceof Entry<?, ?> && msg.getDetail() == MessageDetail.CREATE){
+			Client client = (Client)((Entry) msg.getObject()).getKey();
+			if (client.clientNumber == this.clientNumber){
+				renderer.setEntity((Entity)(((Entry) msg.getObject()).getValue()));
+			}
+			
 		}
 	}
 
