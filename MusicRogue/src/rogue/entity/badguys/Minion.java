@@ -43,7 +43,7 @@ public class Minion extends Entity {
 	}
 
 	public static enum MinionType{
-		ROTATE(Color.cyan), COLOR(Color.white), SCALE(Color.black), FLASH(Color.pink), DEATH(new Color(0xFFDD00FF)), SPEED(Color.yellow);
+		ROTATE(Color.cyan), SCALE(Color.black), FLASH(Color.pink), DEATH(new Color(0xFFDD00FF)), SPEED(Color.yellow);
 		
 		private Color color;
 		
