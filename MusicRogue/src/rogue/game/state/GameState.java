@@ -1,15 +1,13 @@
 package rogue.game.state;
 
 import java.util.AbstractMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import rogue.entity.EnvironmentEntity;
 import rogue.entity.player.Player;
 import rogue.game.client.Client;
-import rogue.game.client.EchoClient;
 import rogue.game.message.MessageHandler;
 import rogue.game.state.InputBuffer.Input;
 import rogue.map.GameMap;
@@ -20,16 +18,10 @@ public class GameState implements Runnable {
 	private boolean running;
 	private GameMap map;
 	private List<Entry<Client, Player>> clientPlayerPairs;
+	private long timeOfLastUpdate;
+	private long delta;
 
-	private final int MAP_SIZE = 64;
-
-	public static void main(String[] args) {
-		List<Client> clients = new LinkedList<Client>();
-		for (int i = 0; i < 2; i++) {
-			clients.add(new EchoClient());
-		}
-		new Thread(new GameState(clients)).start();
-	}
+	private final int MAP_SIZE = 16;
 
 	public GameState(List<Client> clients) {
 		// Add clients to the MessageHandler, only talk with them through the
@@ -42,6 +34,7 @@ public class GameState implements Runnable {
 		for (Client c : clients) {
 			handler.addObserver(c);
 			pairClientToNewPlayer(c);
+			c.addObserver(handler);
 		}
 
 		// Generate map and tell clients
@@ -52,7 +45,7 @@ public class GameState implements Runnable {
 	}
 
 	private void pairClientToNewPlayer(Client c) {
-		Player player = new Player();
+		Player player = new Player(null);
 		handler.notifyCreation(player);
 
 		Entry<Client, Player> entry = new AbstractMap.SimpleEntry<>(c, player);
@@ -64,13 +57,15 @@ public class GameState implements Runnable {
 	private void placePlayers() {
 		for (Entry<Client, Player> entry : clientPlayerPairs) {
 			Player p = entry.getValue();
-			p.setPosition(map.getSpawnSquare());
+			map.put(p, map.getSpawnSquare());
 		}
-		handler.notifyPositions(map.getEntityLayer());
+		handler.notifyUpdate(map.getEntities());
 	}
 
 	@Override
 	public void run() {
+		timeOfLastUpdate = System.nanoTime();
+		
 		running = true;
 		while (running) {
 			update();
@@ -78,16 +73,17 @@ public class GameState implements Runnable {
 	}
 
 	private void update() {
+		delta = System.nanoTime() - timeOfLastUpdate;
 		if (isDone()) {
 			running = false;
-		} else if (beatHasElapsed()) {
+		} else if (beatHasElapsed(delta)) {
 			movePlayers();
+			timeOfLastUpdate = System.nanoTime();
 		}
 	}
 
-	private boolean beatHasElapsed() {
-		// TODO Auto-generated method stub
-		return true;
+	private boolean beatHasElapsed(long delta) {
+		return delta > 500000000L; //120bpm
 	}
 
 	private void movePlayers() {
@@ -96,21 +92,18 @@ public class GameState implements Runnable {
 			Player p = entry.getValue();
 			Input input = p.getBuffer().readInput();
 			if (validMovement(p, input)) {
-				p.setPosition(Position.calcPosition(p.getPosition(), input));
+				map.move(p, Position.calcPosition(p.getPosition(), input));
 			}
 		}
-		handler.notifyPositions(map.getEntityLayer());
-
-		// Check if a movement is valid if (validMovement(players[i], input)) {
-		// Move the player to the new position
+		handler.notifyUpdate(map.getEntities());
 	}
 
 	private boolean validMovement(Player player, Input input) {
 		Position newPos = Position.calcPosition(player.getPosition(), input);
 		EnvironmentEntity placeWeWantToMove = map.getEnvironmentLayer()[newPos
-				.getX()][newPos.getY()];
-		return placeWeWantToMove
-				.equals(EnvironmentEntity.environmentType.FLOOR);
+				.getY()][newPos.getX()];
+		return placeWeWantToMove.getType().equals(
+				EnvironmentEntity.EnvironmentType.FLOOR);
 	}
 
 	private boolean isDone() {

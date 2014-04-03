@@ -1,10 +1,14 @@
 package rogue.entity;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Renderable;
 
 import rogue.map.Position;
 
-public abstract class Entity implements Renderable{
+public abstract class Entity{
+	public Entity(Position position){
+		this.position = position;
+	}
 
 	protected Position position;
 	
@@ -23,5 +27,7 @@ public abstract class Entity implements Renderable{
 	public abstract void onCreate();
 	public abstract void onCollide(Entity entity);
 	public abstract void onDestroy();
+	
+	public abstract Color getColor();
 	
 }

@@ -6,33 +6,16 @@ import java.util.Observer;
 
 import rogue.entity.Entity;
 import rogue.game.client.Client;
-import rogue.game.client.EchoClient;
 import rogue.game.message.Message.MessageDetail;
 import rogue.game.message.Message.MessageType;
 import rogue.game.state.GameState;
 import rogue.game.state.InputBuffer.Input;
 import rogue.map.GameMap;
 
-public class MessageHandler extends Observable implements Observer{
-	public static void main(String[] args) {
-		MessageHandler handler = new MessageHandler(null);
-		handler.addObserver(new EchoClient());
-		handler.notifyCreation(new GameMap(50));
-	}
-	
+public class MessageHandler extends Observable implements Observer{	
 	private final GameState game;
-	
 	public MessageHandler(GameState game){
 		this.game = game;
-	}
-	
-	public void notifyPositions(Entity[][] entityLayer) {
-		Message msg = new Message(MessageType.ENTITY);
-		msg.setDetail(MessageDetail.UPDATE);
-		msg.setObject(entityLayer);
-		
-		setChanged();
-		notifyObservers(msg);
 	}
 	
 	public void notifyUpdate(Object updatedObject){
@@ -46,7 +29,7 @@ public class MessageHandler extends Observable implements Observer{
 			msg = new Message(MessageType.ERROR);
 		}
 		
-		msg.setDetail(MessageDetail.CREATE);
+		msg.setDetail(MessageDetail.UPDATE);
 		msg.setObject(updatedObject);
 		
 		setChanged();

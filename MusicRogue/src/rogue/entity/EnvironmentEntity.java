@@ -1,30 +1,45 @@
 package rogue.entity;
 
-public class EnvironmentEntity extends Entity {
+import org.newdawn.slick.Color;
 
+import rogue.map.Position;
 
-	private char charRep ;
+public class EnvironmentEntity extends Entity{
+
+	private char charRep;
+	private Color color;
+	private EnvironmentType type;
 	
-	public enum environmentType
-	{
+	public enum EnvironmentType {
 		WALL, HALLWAY, FLOOR
 	}
-	
-	
-	public EnvironmentEntity(environmentType t)
-	{
-		switch(t)
-		{
-		case WALL: charRep = '#' ;
-		break ;
-		case HALLWAY: charRep = '%' ;
-		break ;
-		case FLOOR: charRep = '.' ;
-		default: 
+
+	public EnvironmentEntity(EnvironmentType t, Position position) {
+		super(position);
+		this.type = t;
+		
+		switch (t) {
+		case WALL:
+			charRep = '#';
+			color = Color.red;
+			break;
+		case HALLWAY:
+			charRep = '%';
+			color = Color.gray;
+			break;
+		case FLOOR:
+			charRep = '.';
+			color = Color.black;
+			break;
+		default:
 			break;
 		}
 	}
 	
+	public EnvironmentType getType(){
+		return type;
+	}
+
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
@@ -43,16 +58,12 @@ public class EnvironmentEntity extends Entity {
 
 	}
 
-	@Override
-	public void draw(float x, float y) {
-		// TODO Auto-generated method stub
-		
+	public char getCharRep() {
+		return charRep;
 	}
-	
-	
-	public char getCharRep()
-	{
-		return charRep ;
+
+	public Color getColor() {
+		return color;
 	}
 
 }

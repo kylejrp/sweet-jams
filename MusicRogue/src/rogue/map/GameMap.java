@@ -4,39 +4,27 @@ package rogue.map;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
 import rogue.entity.Entity;
 import rogue.entity.EnvironmentEntity;
 
 public class GameMap{
 	private EnvironmentEntity[][] environmentLayer;
-	private Entity[][] entityLayer;
 	private List<Entity>  entities ;
 	
 	public GameMap(int size){
 		environmentLayer = GameMapGenerator.generateBottomLayer(size);
-		entityLayer = GameMapGenerator.generateTopLayer(size);
 		entities = new ArrayList<Entity>() ;
 	}
 	
 	public void put(Entity entity, Position position){
-		entityLayer[position.getX()][position.getY()] = entity;
+		entity.setPosition(position);
 		entities.add(entity) ;
 	}
 	
 	public void move(Entity entity, Position position){
-		int x = entity.getPosition().getX() ;
-		int y = entity.getPosition().getY();
-		entityLayer[position.getX()][position.getY()] = entity ;
-		entityLayer[x][y] = null ;
-		entity.setPosition(x,y);
-	}
-	
-	public Entity remove(Position position){
-		Entity removedEntity = entityLayer[position.getX()][position.getY()] ;
-		entityLayer[position.getX()][position.getY()] = null ;
-		removedEntity.setPosition(null);
-		entities.remove(removedEntity);
-		return removedEntity ;
+		entity.setPosition(position.getX(),position.getY());
 	}
 	
 	public Entity remove(Entity entity){
@@ -45,7 +33,8 @@ public class GameMap{
 		{
 			if(e == entity)
 			{
-				removedEntity = remove(entity.getPosition());
+				entities.remove(entity);
+				entity.setPosition(null);
 				break;
 			}
 		}
@@ -56,14 +45,18 @@ public class GameMap{
 		return environmentLayer;
 	}
 
-	public Entity[][] getEntityLayer() {
-		return entityLayer;
+	public List<Entity> getEntities() {
+		return entities;
 	}
 	
 	public Position getSpawnSquare() {
-		// TODO: Do some big boy calculations here
-		int x = (int) (Math.random()*entityLayer.length);
-		int y = (int) (Math.random()*entityLayer[0].length);
+		Random randomInt = new Random() ;
+		int x = randomInt.nextInt(environmentLayer.length) ;
+		int y = randomInt.nextInt(environmentLayer.length) ;
+		while(environmentLayer[x][y].getType() != EnvironmentEntity.EnvironmentType.FLOOR){
+			x = randomInt.nextInt(environmentLayer.length) ;
+			y = randomInt.nextInt(environmentLayer.length) ;
+		}
 		return new Position(x, y);
 	}
 }
