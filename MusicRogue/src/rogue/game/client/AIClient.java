@@ -25,8 +25,8 @@ public class AIClient extends Client implements Runnable {
 	private boolean needToSendInput;
 	private boolean running;
 
-	public AIClient(MinionType type) {
-		this.type = type;
+	public AIClient() {
+		this.type = MinionType.DEATH;
 		inputDigit = 0;
 		running = true;
 		needToSendInput = false;
@@ -128,5 +128,9 @@ public class AIClient extends Client implements Runnable {
 		int y = (playerPos.getY() - p.getY()) * (playerPos.getY() - p.getY());
 		double distance = Math.sqrt(x + y);
 		return distance;
+	}
+
+	public void setType(MinionType minionType) {
+		this.type = type;
 	}
 }

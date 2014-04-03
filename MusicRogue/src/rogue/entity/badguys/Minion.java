@@ -39,11 +39,17 @@ public class Minion extends Entity {
 
 	@Override
 	public Color getColor(){
-		return Color.green;
+		return type.color;
 	}
 
 	public static enum MinionType{
-		ROTATE, COLOR, SCALE, FLASH, DEATH, SPEED;
+		ROTATE(Color.cyan), COLOR(Color.white), SCALE(Color.orange), FLASH(Color.pink), DEATH(new Color(0xFFDD00FF)), SPEED(Color.yellow);
+		
+		private Color color;
+		
+		MinionType(Color c){
+			this.color = c;
+		}
 		
 		public static MinionType getRandomType(){
 			int i = (int) Math.floor(Math.random()*MinionType.class.getEnumConstants().length);

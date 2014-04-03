@@ -59,12 +59,11 @@ public class MapRenderer extends BasicGame {
 		float width = container.getWidth();
 		float scale = width / (map.getEnvironmentLayer().length);
 
-		
 		g.setAntiAlias(true);
 		Shape bg = new Rectangle(0, 0, width, width);
 		g.setColor(new Color(30, 0, 0));
 		g.fill(bg);
-		g.rotate(width/2, width/2, rotate);
+		g.rotate(width / 2, width / 2, rotate);
 		if (map != null) {
 			Shape square = new Rectangle(1 * scale, 1 * scale, 1f * scale,
 					1f * scale);
@@ -90,7 +89,9 @@ public class MapRenderer extends BasicGame {
 					int y = element.getPosition().getY();
 					square.setLocation(x * scale, y * scale);
 					g.setColor(element.getColor());
-					g.fill(square);
+					if (element instanceof Player) {
+						g.fill(square);
+					}
 					g.draw(square);
 				}
 			}
@@ -124,7 +125,8 @@ public class MapRenderer extends BasicGame {
 							break;
 						}
 
-						g.drawImage(keyImage, xPos, container.getWidth() - KEYWIDTH);
+						g.drawImage(keyImage, xPos, container.getWidth()
+								- KEYWIDTH);
 						xPos += KEYWIDTH;
 					}
 
@@ -160,15 +162,15 @@ public class MapRenderer extends BasicGame {
 				KEYWIDTH, KEYWIDTH);
 
 	}
-	
+
 	private boolean sweetbool = true;
 
 	@Override
 	public void update(GameContainer container, int delta)
 			throws SlickException {
-		fade *= 0.9995;
+		fade *= 0.995;
 		if (updated) {
-			if(sweetbool){
+			if (sweetbool) {
 				sweetbool = false;
 				SOUND_SWEET.play(getHarmonicFrequency(), 1.0f);
 			} else {
@@ -180,8 +182,16 @@ public class MapRenderer extends BasicGame {
 	}
 
 	private float getHarmonicFrequency() {
-		float[] harmonics = { 1.0f, 1.059f, 1.122f, 1.189f, 1.260f,/* 1.335f,
-				1.414f, 1.498f, 1.587f, 1.682f, 1.782f, 1.888f, 2.0f*/ };
+		float[] harmonics = { 1.0f, 1.059f, 1.122f, 1.189f, 1.260f,/*
+																	 * 1.335f,
+																	 * 1.414f,
+																	 * 1.498f,
+																	 * 1.587f,
+																	 * 1.682f,
+																	 * 1.782f,
+																	 * 1.888f,
+																	 * 2.0f
+																	 */};
 		return harmonics[(int) Math.floor(Math.random() * harmonics.length)];
 	}
 

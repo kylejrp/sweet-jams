@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import rogue.entity.Entity;
 import rogue.entity.EnvironmentEntity;
 import rogue.entity.badguys.Minion;
-import rogue.entity.badguys.Minion.MinionType;
 import rogue.entity.player.Player;
 import rogue.game.client.AIClient;
 import rogue.game.client.Client;
@@ -26,7 +25,7 @@ public class GameState implements Runnable {
 	private long timeOfLastUpdate;
 	private long delta;
 
-	private final int MAP_SIZE = 24;
+	private final int MAP_SIZE = 20;
 
 	public GameState(List<Client> clients) {
 		// Add clients to the MessageHandler, only talk with them through the
@@ -37,8 +36,8 @@ public class GameState implements Runnable {
 		// clients.add(new AIClient(MinionType.COLOR));
 
 		clientEntityPairs = new ArrayList<>();
-		for(int i = 0; i < 100; i ++){
-			clients.add(new AIClient(MinionType.DEATH));
+		for(int i = 0; i < 10; i ++){
+			clients.add(new AIClient());
 		}
 
 		for (Client c : clients) {
@@ -59,7 +58,9 @@ public class GameState implements Runnable {
 		if (c instanceof MapRenderClient) {
 			e = new Player(null);
 		} else if (c instanceof AIClient) {
-			e = new Minion(null);
+			Minion m = new Minion(null);
+			e = m; //c^2
+			((AIClient) c).setType(m.getMinionType());
 		} else {
 			e = new Minion(null);
 		}
