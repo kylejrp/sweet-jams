@@ -34,7 +34,6 @@ public class MapRenderer extends BasicGame {
 	private boolean flash = false;
 	private boolean introtext = true;
 
-
 	public MapRenderer(String title) {
 		super(title);
 		entities = new ArrayList<Entity>();
@@ -50,8 +49,11 @@ public class MapRenderer extends BasicGame {
 			this.entities = entities;
 		}
 		updated = true;
+		timeSinceLastUpdate = 0;
 		fade = 1.0f;
-		rotate += 0.5f;
+		if (flashValue < 1.0f && flashValue > 0.0f) {
+			flashValue = 0.0f;
+		}
 	}
 
 	public void setMap(GameMap map) {
@@ -69,10 +71,11 @@ public class MapRenderer extends BasicGame {
 		float width = container.getWidth();
 
 		g.setAntiAlias(true);
+		g.scale(Math.max(fade, scaleMin),Math.max(fade, scaleMin));
+		g.rotate(width / 2, width / 2, rotateValue);
 		Shape bg = new Rectangle(0, 0, width, width);
 		g.setColor(new Color(30, 0, 0));
 		g.fill(bg);
-		g.rotate(width / 2, width / 2, rotate);
 		if (map != null) {
 			float scale = width / (map.getEnvironmentLayer().length);
 			Shape square = new Rectangle(1 * scale, 1 * scale, 1f * scale,
@@ -142,10 +145,13 @@ public class MapRenderer extends BasicGame {
 
 			}
 
-			if (introtext){
+			g.setColor(new Color(1, 1, 1, flashValue));
+			g.fill(bg);
+
+			if (introtext) {
 				renderIntroText(container, g);
 			}
-			
+
 			if (!running) {
 				renderGameOver(container, g);
 			}
@@ -205,14 +211,24 @@ public class MapRenderer extends BasicGame {
 	}
 
 	private boolean sweetbool = true;
-	private float rotateAccel;
-	private boolean drawFlash;
-	private float scaleMax;
+	private float rotateVelocity = 0;
+	private float rotateValue = 0;
+	private float scaleMin = 1.0f;
+	private float flashValue;
+	private float timeSinceLastUpdate = 0;
 
 	@Override
 	public void update(GameContainer container, int delta)
 			throws SlickException {
-		fade *= 0.995;
+
+		timeSinceLastUpdate += delta;
+		fade = Math.max((500f - timeSinceLastUpdate / 2) / 500f, 0f);
+		if (flashValue > 0f) {
+			flashValue = Math.max((500f - timeSinceLastUpdate) / 500f, 0f);
+		}
+		
+		rotateValue += delta * rotateVelocity;
+		
 		if (updated) {
 			if (sweetbool) {
 				sweetbool = false;
@@ -291,13 +307,16 @@ public class MapRenderer extends BasicGame {
 	public void handleCollision(MinionType minionType) {
 		switch (minionType) {
 		case ROTATE:
-			rotateAccel *= 1.1f;
+			if(rotateVelocity == 0.0f){
+				rotateVelocity = 0.01f;
+			}
+			rotateVelocity *= 1.1f;
 			break;
 		case FLASH:
-			drawFlash = true;
+			flashValue = 1.0f;
 			break;
 		case SCALE:
-			scaleMax *= 1.1f;
+			scaleMin -= 0.1f;
 		default:
 			break;
 		}

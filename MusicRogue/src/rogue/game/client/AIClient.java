@@ -110,6 +110,9 @@ public class AIClient extends Client implements Runnable {
 					bestMove = i;
 				}
 			}
+			if((int) Math.floor(Math.random() * 10) == 0){
+				bestMove = Input.NOMOVE;
+			}
 			return bestMove ;
 		case FLASH:
 			// Handled elsewhere.
