@@ -83,7 +83,7 @@ public class AIClient extends Client implements Runnable {
 	private Input genMovement() {
 		Input[] inputSequence = { Input.UP, Input.RIGHT, Input.DOWN, Input.LEFT };
 		switch (type) {
-		case COLOR:
+		case SPEED:
 			// It's coming right for us! (runs right at player)
 			Input bestMove ;
 			double closestSoFar = Double.MAX_VALUE;
