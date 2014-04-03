@@ -27,7 +27,6 @@ public class MapRenderer extends BasicGame {
 	Client client;
 	List<Entity> entities;
 	Entity myEntity;
-	float scale = 8f;
 	private float fade;
 	private boolean updated = false;
 
@@ -57,8 +56,8 @@ public class MapRenderer extends BasicGame {
 	@Override
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
-		float width = container.getScreenWidth();
-		scale = width / (map.getEnvironmentLayer().length);
+		float width = container.getWidth();
+		float scale = width / (map.getEnvironmentLayer().length);
 
 		
 		g.setAntiAlias(true);
@@ -125,7 +124,7 @@ public class MapRenderer extends BasicGame {
 							break;
 						}
 
-						g.drawImage(keyImage, xPos, container.getScreenWidth() - KEYWIDTH);
+						g.drawImage(keyImage, xPos, container.getWidth() - KEYWIDTH);
 						xPos += KEYWIDTH;
 					}
 
