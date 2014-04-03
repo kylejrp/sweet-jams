@@ -43,7 +43,7 @@ public class Minion extends Entity {
 	}
 
 	public static enum MinionType{
-		ROTATE, COLOR, SCALE, FLASH, DEATH;
+		ROTATE, COLOR, SCALE, FLASH, DEATH, SPEED;
 		
 		public static MinionType getRandomType(){
 			int i = (int) Math.floor(Math.random()*MinionType.class.getEnumConstants().length);
