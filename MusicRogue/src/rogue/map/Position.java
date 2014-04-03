@@ -44,6 +44,7 @@ public class Position {
 		return "(" + x + ", "+ y + ")";
 	}
 	
+	
 	@Override
 	public boolean equals(Object o){
 		if(o instanceof Position){
