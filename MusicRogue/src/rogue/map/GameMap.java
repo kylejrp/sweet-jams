@@ -53,7 +53,7 @@ public class GameMap{
 		Random randomInt = new Random() ;
 		int x = randomInt.nextInt(environmentLayer.length) ;
 		int y = randomInt.nextInt(environmentLayer.length) ;
-		while(environmentLayer[x][y].getType() != EnvironmentEntity.EnvironmentType.FLOOR){
+		while(environmentLayer[y][x].getType() != EnvironmentEntity.EnvironmentType.FLOOR){
 			x = randomInt.nextInt(environmentLayer.length) ;
 			y = randomInt.nextInt(environmentLayer.length) ;
 		}
