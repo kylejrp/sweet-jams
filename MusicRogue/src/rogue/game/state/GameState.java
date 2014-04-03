@@ -21,49 +21,58 @@ import rogue.map.Position;
 public class GameState implements Runnable {
 	private MessageHandler handler;
 	private boolean running;
+	private boolean jamming;
+	private int beatCount;
+	private long beatTime = 500000000L; // 120bpm
 	private GameMap map;
 	private List<Entry<Client, Entity>> clientEntityPairs;
 	private long timeOfLastUpdate;
 	private long delta;
 
-	private final int MAP_SIZE = 16;
+	private final int MAP_SIZE = 20;
 
 	public GameState(List<Client> clients) {
 		// Add clients to the MessageHandler, only talk with them through the
 		// handler from now on
 		handler = new MessageHandler(this);
+		clientEntityPairs = new ArrayList<Entry<Client, Entity>>();
 
 		// TODO: send server info
 		// clients.add(new AIClient(MinionType.COLOR));
 
-		clientEntityPairs = new ArrayList<>();
-		clients.add(new AIClient(MinionType.COLOR));
 		for (Client c : clients) {
 			handler.addObserver(c);
-			pairClientToNewPlayer(c);
+			pairClientToNewEntity(c);
 			c.addObserver(handler);
 		}
 
 		// Generate map and tell clients
 		map = new GameMap(MAP_SIZE);
-		handler.notifyCreation(map);
+		GameMap mapCopy = new GameMap(map);
+		handler.notifyCreation(mapCopy);
 
 		placePlayers();
 	}
 
-	private void pairClientToNewPlayer(Client c) {
+	private Entity pairClientToNewEntity(Client c) {		
 		Entity e;
+		Entity eCopy;
 		if (c instanceof MapRenderClient) {
-			e = new Player(null);
-		} else if (c instanceof AIClient) {
-			e = new Minion(null);
+			e = new Player();
+			eCopy = new Player((Player) e);
 		} else {
-			e = new Minion(null);
+			e = new Minion();
+			eCopy = new Minion((Minion) e);
+			if (c instanceof AIClient) {
+				((AIClient) c).setType(((Minion)e).getMinionType());
+			}
 		}
 		Entry<Client, Entity> entry = new AbstractMap.SimpleEntry<>(c, e);
-
+		Entry<Client, Entity> entryCopy = new AbstractMap.SimpleImmutableEntry<>(c, eCopy);
+		
 		clientEntityPairs.add(entry);
-		handler.notifyCreation(entry);
+		handler.notifyCreation(new AbstractMap.SimpleEntry<Client, Entity>(entryCopy));
+		return e;
 	}
 
 	// Place players on map
@@ -86,18 +95,32 @@ public class GameState implements Runnable {
 		}
 	}
 
+	private void attemptPlaceMinions() {
+		if(beatCount % 4 == 0){
+			Client c = new AIClient();
+			handler.addObserver(c);
+			Entity e = pairClientToNewEntity(c);
+			map.put(e,map.getSpawnSquare());
+			c.addObserver(handler);
+		}
+	}
+
 	private void update() {
 		delta = System.nanoTime() - timeOfLastUpdate;
 		if (isDone()) {
 			running = false;
 		} else if (beatHasElapsed(delta)) {
+			if(jamming){
+				attemptPlaceMinions();
+				beatCount++;
+			}
 			movePlayers();
 			timeOfLastUpdate = System.nanoTime();
 		}
 	}
 
 	private boolean beatHasElapsed(long delta) {
-		return delta > 500000000L; // 120bpm
+		return delta > beatTime;
 	}
 
 	private void movePlayers() {
@@ -105,11 +128,58 @@ public class GameState implements Runnable {
 		for (Entry<Client, Entity> entry : clientEntityPairs) {
 			Entity e = entry.getValue();
 			Input input = e.getBuffer().readInput();
+			if(e instanceof Player){
+				if(!validMovement(e, input)){
+					running = false;
+					handler.notifyDestruction(this);
+				}
+			}
 			if (validMovement(e, input)) {
+				if(beatCount % 2 == 0 && e instanceof Minion && ((Minion) e).getMinionType() == MinionType.FLASH){
+					map.move(e, map.getSpawnSquare());
+				}
 				map.move(e, Position.calcPosition(e.getPosition(), input));
 			}
 		}
-		handler.notifyUpdate(map.getEntities());
+
+		checkCollision();
+		handler.notifyUpdate(new GameMap(map).getEntities());
+	}
+
+	private void checkCollision() {
+		Player p = null;
+		List<Minion> badguys = new ArrayList<Minion>();
+		for(Entry<Client, Entity> entry : clientEntityPairs){
+			Entity e = entry.getValue();
+			if(e instanceof Player){
+				p = (Player) e;
+			} else if (e instanceof Minion){
+				badguys.add((Minion) e);
+			}
+		}
+		
+		for(Minion m : badguys){
+			if(m.getPosition().equals(p.getPosition())){
+				//notifyCollision(m.getMinionType());
+				for(Entry<Client, Entity> entry : clientEntityPairs){
+					if(entry.getValue() == m){
+						handler.notifyDestruction(new Minion(m));
+						if(m.getMinionType() == MinionType.SPEED){
+							beatTime /= 1.2; // Speed is 20% faster
+							Math.max(beatTime, 250000000);
+						} else if (m.getMinionType() == MinionType.DEATH){
+							running = false;
+							handler.notifyDestruction(this);
+						}
+						clientEntityPairs.remove(entry);
+						map.remove(m);
+						break;
+					}
+				}
+			}
+		}
+		
+		
 	}
 
 	private boolean validMovement(Entity e, Input input) {
@@ -132,6 +202,10 @@ public class GameState implements Runnable {
 			}
 		}
 		return null;
+	}
+
+	public void beginJams() {
+		jamming = true;
 	}
 
 }

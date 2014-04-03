@@ -11,6 +11,11 @@ public class Position {
 		this.y = y;
 	}
 
+	public Position(Position position) {
+		this.x = position.getX();
+		this.y = position.getY();
+	}
+
 	public int getX() {
 		return x;
 	}
@@ -42,6 +47,17 @@ public class Position {
 	@Override
 	public String toString() {
 		return "(" + x + ", "+ y + ")";
+	}
+	
+	
+	@Override
+	public boolean equals(Object o){
+		if(o instanceof Position){
+			Position pos = (Position) o;
+			return (pos.getX() == this.getX()) && (pos.getY() == this.getY());
+		} else {
+			return false;
+		}
 	}
 	
 }

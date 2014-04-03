@@ -9,6 +9,7 @@ import rogue.game.client.Client;
 import rogue.game.message.Message.MessageDetail;
 import rogue.game.message.Message.MessageType;
 import rogue.game.state.GameState;
+import rogue.game.state.InputBuffer;
 import rogue.game.state.InputBuffer.Input;
 import rogue.map.GameMap;
 
@@ -55,7 +56,7 @@ public class MessageHandler extends Observable implements Observer {
 		notifyObservers(msg);
 
 	}
-	
+
 	public void notifyDestruction(Object destroyedObject) {
 		Message msg;
 
@@ -63,11 +64,13 @@ public class MessageHandler extends Observable implements Observer {
 			msg = new Message(MessageType.MAP);
 		} else if (destroyedObject instanceof Entry) {
 			msg = new Message(MessageType.ENTITY);
+		} else if (destroyedObject instanceof GameState) {
+			msg = new Message(MessageType.SERVER);
 		} else {
 			msg = new Message(MessageType.ERROR);
 		}
 
-		msg.setDetail(MessageDetail.CREATE);
+		msg.setDetail(MessageDetail.DESTROY);
 		msg.setObject(destroyedObject);
 
 		setChanged();
@@ -78,10 +81,21 @@ public class MessageHandler extends Observable implements Observer {
 	@Override
 	// This is when a client sends input
 	public void update(Observable obs, Object obj) {
-		Client client = (Client) obs;
-		Input input = (Input) obj;
+		if (obj instanceof Input) {
+			Client client = (Client) obs;
+			Input input = (Input) obj;
 
-		game.getInputBuffer(client).addInput(input);
+			InputBuffer buffer = game.getInputBuffer(client);
+			if (null != buffer) {
+				buffer.addInput(input);
+			}
+		} else if (obj instanceof Message) {
+			Message msg = (Message) obj;
+			if (msg.getType() == MessageType.SERVER
+					&& msg.getDetail() == MessageDetail.CREATE) {
+				game.beginJams();
+			}
+		}
 
 	}
 }

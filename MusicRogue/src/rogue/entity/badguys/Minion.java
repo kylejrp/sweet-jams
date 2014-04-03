@@ -8,11 +8,19 @@ import rogue.map.Position;
 
 public class Minion extends Entity {
 	private final MinionType type;
-	
-	
-	public Minion(Position position) {
-		super(position);
+
+	public Minion() {
+		super();
 		type = MinionType.getRandomType();
+	}
+
+	public Minion(Minion m) {
+		super();
+		if (m.getPosition() != null) {
+			this.position = new Position(m.getPosition());
+		}
+		this.type = m.getMinionType();
+		this.ID = m.ID;
 	}
 
 	public MinionType getMinionType() {
@@ -38,15 +46,23 @@ public class Minion extends Entity {
 	}
 
 	@Override
-	public Color getColor(){
-		return Color.green;
+	public Color getColor() {
+		return type.color;
 	}
 
-	public static enum MinionType{
-		ROTATE, COLOR, SCALE, FLASH, DEATH;
-		
-		public static MinionType getRandomType(){
-			int i = (int) Math.floor(Math.random()*MinionType.class.getEnumConstants().length);
+	public static enum MinionType {
+		ROTATE(Color.cyan), SCALE(Color.black), FLASH(Color.pink), DEATH(
+				new Color(0xFFDD00FF)), SPEED(Color.yellow);
+
+		private Color color;
+
+		MinionType(Color c) {
+			this.color = c;
+		}
+
+		public static MinionType getRandomType() {
+			int i = (int) Math.floor(Math.random()
+					* MinionType.class.getEnumConstants().length);
 			return MinionType.class.getEnumConstants()[i];
 		}
 	}
