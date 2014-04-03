@@ -81,20 +81,25 @@ public class AIClient extends Client implements Runnable {
 	}
 
 	private Input genMovement() {
+		Player player = null;
+		for(Entity e : entities){
+			if (e instanceof Player){
+				player = (Player) e;
+			}
+		}
+		
+		
 		Input[] inputSequence = { Input.UP, Input.RIGHT, Input.DOWN, Input.LEFT };
 		switch (type) {
 		case SPEED:
 			// It's coming right for us! (runs right at player)
 			Input bestMove = Input.NOMOVE ;
 			double closestSoFar = Double.MAX_VALUE;
-			for (int i = 0; i < inputSequence.length; i++) {
-				if(findEuclideanDistance(myEntity.getPosition())<closestSoFar || closestSoFar == Double.MAX_VALUE){
-					closestSoFar = findEuclideanDistance(Position
-							.calcPosition(myEntity.getPosition(), inputSequence[i])) ;
-				}
-				
-				if (findEuclideanDistance(myEntity.getPosition()) > closestSoFar) {
-					bestMove = inputSequence[i] ;
+			for( Input i : Input.class.getEnumConstants()){
+				double potentialDistance = findEuclideanDistance(Position.calcPosition(myEntity.getPosition(), i), player);
+				if( potentialDistance < closestSoFar){
+					closestSoFar = potentialDistance;
+					bestMove = i;
 				}
 			}
 			return bestMove ;
@@ -117,20 +122,15 @@ public class AIClient extends Client implements Runnable {
 		return Input.NOMOVE;
 	}
 
-	private double findEuclideanDistance(Position p) {
-		Position playerPos = null;
-		for (int i = 0; i < entities.size(); i++) {
-			if (entities.get(i) instanceof Player) {
-				playerPos = entities.get(i).getPosition();
-			}
-		}
-		int x = (playerPos.getX() - p.getX()) * (playerPos.getX() - p.getX());
-		int y = (playerPos.getY() - p.getY()) * (playerPos.getY() - p.getY());
+	private static double findEuclideanDistance(Position p, Entity e) {
+		Position entityPos = e.getPosition();		
+		int x = (entityPos.getX() - p.getX()) * (entityPos.getX() - p.getX());
+		int y = (entityPos.getY() - p.getY()) * (entityPos.getY() - p.getY());
 		double distance = Math.sqrt(x + y);
 		return distance;
 	}
 
 	public void setType(MinionType minionType) {
-		this.type = type;
+		this.type = minionType;
 	}
 }
