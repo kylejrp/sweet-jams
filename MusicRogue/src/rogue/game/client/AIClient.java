@@ -1,16 +1,18 @@
 package rogue.game.client;
 
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Random;
 
-import rogue.game.message.Message;
-import rogue.game.state.InputBuffer.Input;
-import rogue.map.GameMap;
-import rogue.map.Position;
 import rogue.entity.Entity;
 import rogue.entity.badguys.Minion;
 import rogue.entity.badguys.Minion.MinionType;
 import rogue.entity.player.Player;
+import rogue.game.message.Message;
+import rogue.game.message.Message.MessageDetail;
+import rogue.game.state.InputBuffer.Input;
+import rogue.map.GameMap;
+import rogue.map.Position;
 
 public class AIClient extends Client implements Runnable {
 	private Random randomInt = new Random();
@@ -46,9 +48,16 @@ public class AIClient extends Client implements Runnable {
 				&& msg.getDetail() == Message.MessageDetail.UPDATE) {
 			entities = (List<Entity>) msg.getObject();
 			needToSendInput = true;
+		} else if (msg.getObject() instanceof Entry<?, ?>
+		&& msg.getDetail() == MessageDetail.CREATE) {
+			Client client = (Client) ((Entry) msg.getObject()).getKey();
+			if (client.clientNumber == this.clientNumber) {
+				myEntity = (Minion) (((Entry) msg.getObject()).getValue());
+			}
 		} 
 		
 		// TODO: Check for entity death
+
 	}
 
 	@Override

@@ -46,10 +46,10 @@ public class GameState implements Runnable {
 
 	private void pairClientToNewPlayer(Client c) {
 		Player player = new Player(null);
-		handler.notifyCreation(player);
-
 		Entry<Client, Player> entry = new AbstractMap.SimpleEntry<>(c, player);
+		
 		clientPlayerPairs.add(entry);
+		handler.notifyCreation(entry);
 	}
 
 	// Place players on map

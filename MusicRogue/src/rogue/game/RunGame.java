@@ -1,23 +1,23 @@
 package rogue.game;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.SlickException;;
+import org.newdawn.slick.SlickException;
+
+import rogue.game.client.Client;
+import rogue.game.client.MapRenderClient;
+import rogue.game.state.GameState;
 
 public class RunGame {
-	public static void main(String[] args) {
-		try
-		{
-			AppGameContainer appgc;
-			appgc = new AppGameContainer(new MusicRogueGame("Music Rogue"));
-			appgc.setDisplayMode(640, 480, false);
-			appgc.start();
-		}
-		catch (SlickException ex)
-		{
-			Logger.getLogger(MusicRogueGame.class.getName()).log(Level.SEVERE, null, ex);
-		}
+	public static void main(String[] args) throws SlickException {
+		MapRenderer renderer = new MapRenderer("SWEET JAMS");
+		MapRenderClient client = new MapRenderClient(renderer);
+		new Thread(client).start();
+		
+		List<Client> clients = new LinkedList<Client>();
+		clients.add(client);
+		new Thread(new GameState(clients)).start();
 	}
 }

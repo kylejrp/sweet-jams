@@ -4,7 +4,7 @@ package rogue.game.message;
 public class Message {
 	public static enum MessageType {
 		// Messages that the server sends to players
-		ENTITY, MAP, SERVER,
+		ENTITY, MAP, SERVER, PAIR,
 		// Messages that the players send to the server
 		PLAYER, INPUT,
 		// Messages that we create when something went wrong

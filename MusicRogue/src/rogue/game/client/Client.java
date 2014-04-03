@@ -7,8 +7,8 @@ import rogue.game.message.Message;
 import rogue.game.message.MessageHandler;
 import rogue.game.state.InputBuffer.Input;
 
-public abstract class Client extends Observable implements Observer {
-	protected int clientNumber;
+public abstract class Client extends Observable implements Observer, Runnable {
+	final protected int clientNumber;
 	static int currentNumber = 1;
 
 	public Client() {
