@@ -51,12 +51,25 @@ public class GameMap{
 	
 	public Position getSpawnSquare() {
 		Random randomInt = new Random() ;
-		int x = randomInt.nextInt(environmentLayer.length) ;
-		int y = randomInt.nextInt(environmentLayer.length) ;
-		while(environmentLayer[y][x].getType() != EnvironmentEntity.EnvironmentType.FLOOR){
-			x = randomInt.nextInt(environmentLayer.length) ;
-			y = randomInt.nextInt(environmentLayer.length) ;
+
+		while(true){
+			boolean validPosition = true;
+			int x = randomInt.nextInt(environmentLayer.length) ;
+			int y = randomInt.nextInt(environmentLayer.length) ;
+			if(environmentLayer[y][x].getType() != EnvironmentEntity.EnvironmentType.FLOOR){
+				validPosition = false;
+			}
+			Position pos = new Position(x,y);
+			for(Entity e : entities){
+				if(pos == e.getPosition()){
+					validPosition = false;
+				}
+			}
+			if(validPosition){
+				return pos;
+			}
 		}
-		return new Position(x, y);
+		
+		
 	}
 }
