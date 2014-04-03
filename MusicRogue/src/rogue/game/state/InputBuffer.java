@@ -2,7 +2,7 @@ package rogue.game.state;
 
 import java.util.NoSuchElementException;
 import java.util.Queue;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class InputBuffer {
 	public static enum Input {
@@ -15,9 +15,22 @@ public class InputBuffer {
 	private Input lastMove;
 
 	public InputBuffer(int size) {
-		buffer = new LinkedBlockingDeque<Input>(size);
+		buffer = new ArrayBlockingQueue<Input>(size);
 		bufferChanged = true;
 		lastMove = Input.NOMOVE;
+	}
+
+	public InputBuffer(InputBuffer inBuff) {
+		if (inBuff.buffer.size() != 0) {
+			this.buffer = new ArrayBlockingQueue<Input>(inBuff.buffer.size());
+		} else {
+			this.buffer = new ArrayBlockingQueue<Input>(1);
+		}
+		bufferChanged = true;
+		lastMove = Input.NOMOVE;
+		for (Input i : inBuff.buffer) {
+			buffer.add(i);
+		}
 	}
 
 	public synchronized Input readInput() {
@@ -40,7 +53,7 @@ public class InputBuffer {
 			bufferChanged = false;
 			synchronized (this) {
 				calculatedArray = buffer.toArray();
-				if(calculatedArray.length == 0){
+				if (calculatedArray.length == 0) {
 					calculatedArray = new Object[1];
 					calculatedArray[0] = Input.NOMOVE;
 				}

@@ -16,6 +16,7 @@ import org.newdawn.slick.openal.SoundStore;
 
 import rogue.entity.Entity;
 import rogue.entity.EnvironmentEntity;
+import rogue.entity.badguys.Minion.MinionType;
 import rogue.entity.player.Player;
 import rogue.game.client.Client;
 import rogue.game.client.MapRenderClient;
@@ -26,9 +27,13 @@ public class MapRenderer extends BasicGame {
 	GameMap map;
 	Client client;
 	List<Entity> entities;
-	Entity myEntity;
+	Player myPlayer;
 	private float fade;
 	private boolean updated = false;
+	private boolean running = true;
+	private boolean flash = false;
+	private boolean introtext = true;
+
 
 	public MapRenderer(String title) {
 		super(title);
@@ -60,6 +65,7 @@ public class MapRenderer extends BasicGame {
 	@Override
 	public void render(GameContainer container, Graphics g)
 			throws SlickException {
+
 		float width = container.getWidth();
 
 		g.setAntiAlias(true);
@@ -105,44 +111,70 @@ public class MapRenderer extends BasicGame {
 				}
 
 				g.resetTransform();
+			}
 
-				for (Entity element : entities) {
-					if (element instanceof Player) {
-						Player player = (Player) element;
-						InputBuffer buffer = player.getBuffer();
-						Object[] inputs = buffer.toArray();
-						float xPos = 0.0f;
-						Image keyImage;
-						for (Object obj : inputs) {
-							InputBuffer.Input in = (InputBuffer.Input) obj;
-							switch (in) {
-							case UP:
-								keyImage = IMG_KEY_UP;
-								break;
-							case DOWN:
-								keyImage = IMG_KEY_DOWN;
-								break;
-							case LEFT:
-								keyImage = IMG_KEY_LEFT;
-								break;
-							case RIGHT:
-								keyImage = IMG_KEY_RIGHT;
-								break;
-							default:
-								keyImage = IMG_KEY_BLANK;
-								break;
-							}
-
-							g.drawImage(keyImage, xPos, container.getWidth()
-									- KEYWIDTH);
-							xPos += KEYWIDTH;
-						}
-
-					}
+			InputBuffer buffer = getPlayer().getBuffer();
+			Object[] inputs = buffer.toArray();
+			float xPos = 0.0f;
+			Image keyImage;
+			for (Object obj : inputs) {
+				InputBuffer.Input in = (InputBuffer.Input) obj;
+				switch (in) {
+				case UP:
+					keyImage = IMG_KEY_UP;
+					break;
+				case DOWN:
+					keyImage = IMG_KEY_DOWN;
+					break;
+				case LEFT:
+					keyImage = IMG_KEY_LEFT;
+					break;
+				case RIGHT:
+					keyImage = IMG_KEY_RIGHT;
+					break;
+				default:
+					keyImage = IMG_KEY_BLANK;
+					break;
 				}
+
+				g.drawImage(keyImage, xPos, container.getWidth() - KEYWIDTH);
+				xPos += KEYWIDTH;
+
+			}
+
+			if (introtext){
+				renderIntroText(container, g);
+			}
+			
+			if (!running) {
+				renderGameOver(container, g);
 			}
 
 		}
+	}
+
+	private void renderIntroText(GameContainer container, Graphics g) {
+		if (flash) {
+			g.setColor(Color.white);
+			flash = false;
+		} else {
+			g.setColor(Color.black);
+			flash = true;
+		}
+		g.drawString("PRESS SPACE TO JAM", container.getWidth() / 2,
+				container.getHeight() / 2);
+	}
+
+	private void renderGameOver(GameContainer container, Graphics g) {
+		if (flash) {
+			g.setColor(Color.white);
+			flash = false;
+		} else {
+			g.setColor(Color.black);
+			flash = true;
+		}
+		g.drawString("GAME OVER", container.getWidth() / 2,
+				container.getHeight() / 2);
 	}
 
 	private Image IMG_KEY_UP;
@@ -173,6 +205,9 @@ public class MapRenderer extends BasicGame {
 	}
 
 	private boolean sweetbool = true;
+	private float rotateAccel;
+	private boolean drawFlash;
+	private float scaleMax;
 
 	@Override
 	public void update(GameContainer container, int delta)
@@ -206,24 +241,34 @@ public class MapRenderer extends BasicGame {
 
 	@Override
 	public void keyPressed(int key, char c) {
+		InputBuffer.Input i = InputBuffer.Input.NOMOVE;
 		switch (key) {
 		case org.newdawn.slick.Input.KEY_UP:
 		case org.newdawn.slick.Input.KEY_W:
-			client.sendInput(rogue.game.state.InputBuffer.Input.UP);
+			i = InputBuffer.Input.UP;
 			break;
 		case org.newdawn.slick.Input.KEY_DOWN:
 		case org.newdawn.slick.Input.KEY_S:
-			client.sendInput(rogue.game.state.InputBuffer.Input.DOWN);
+			i = InputBuffer.Input.DOWN;
 			break;
 		case org.newdawn.slick.Input.KEY_LEFT:
 		case org.newdawn.slick.Input.KEY_A:
-			client.sendInput(rogue.game.state.InputBuffer.Input.LEFT);
+			i = InputBuffer.Input.LEFT;
 			break;
 		case org.newdawn.slick.Input.KEY_RIGHT:
 		case org.newdawn.slick.Input.KEY_D:
-			client.sendInput(rogue.game.state.InputBuffer.Input.RIGHT);
+			i = InputBuffer.Input.RIGHT;
+			break;
+		case org.newdawn.slick.Input.KEY_SPACE:
+		case org.newdawn.slick.Input.KEY_ENTER:
+			client.notifyGameStart();
+			introtext = false;
 		default:
 			break;
+		}
+		if (i != InputBuffer.Input.NOMOVE) {
+			client.sendInput(i);
+			getPlayer().getBuffer().addInput(i); // Local copy
 		}
 
 	}
@@ -231,8 +276,31 @@ public class MapRenderer extends BasicGame {
 	public void keyReleased(int key, char c) {
 	}
 
-	public void setEntity(Entity entity) {
-		myEntity = entity;
+	public void setPlayer(Player e) {
+		myPlayer = e;
+	}
+
+	public Player getPlayer() {
+		return myPlayer;
+	}
+
+	public void setRunning(boolean b) {
+		running = b;
+	}
+
+	public void handleCollision(MinionType minionType) {
+		switch (minionType) {
+		case ROTATE:
+			rotateAccel *= 1.1f;
+			break;
+		case FLASH:
+			drawFlash = true;
+			break;
+		case SCALE:
+			scaleMax *= 1.1f;
+		default:
+			break;
+		}
 	}
 
 }

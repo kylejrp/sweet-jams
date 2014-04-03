@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import rogue.entity.Entity;
 import rogue.entity.EnvironmentEntity;
 import rogue.entity.badguys.Minion;
+import rogue.entity.badguys.Minion.MinionType;
 import rogue.entity.player.Player;
 import rogue.game.client.AIClient;
 import rogue.game.client.Client;
@@ -20,6 +21,9 @@ import rogue.map.Position;
 public class GameState implements Runnable {
 	private MessageHandler handler;
 	private boolean running;
+	private boolean jamming;
+	private int beatCount;
+	private long beatTime = 500000000L; // 120bpm
 	private GameMap map;
 	private List<Entry<Client, Entity>> clientEntityPairs;
 	private long timeOfLastUpdate;
@@ -31,18 +35,14 @@ public class GameState implements Runnable {
 		// Add clients to the MessageHandler, only talk with them through the
 		// handler from now on
 		handler = new MessageHandler(this);
+		clientEntityPairs = new ArrayList<Entry<Client, Entity>>();
 
 		// TODO: send server info
 		// clients.add(new AIClient(MinionType.COLOR));
 
-		clientEntityPairs = new ArrayList<>();
-		for(int i = 0; i < 1000; i ++){
-			clients.add(new AIClient());
-		}
-
 		for (Client c : clients) {
 			handler.addObserver(c);
-			pairClientToNewPlayer(c);
+			pairClientToNewEntity(c);
 			c.addObserver(handler);
 		}
 
@@ -54,7 +54,7 @@ public class GameState implements Runnable {
 		placePlayers();
 	}
 
-	private void pairClientToNewPlayer(Client c) {		
+	private Entity pairClientToNewEntity(Client c) {		
 		Entity e;
 		Entity eCopy;
 		if (c instanceof MapRenderClient) {
@@ -72,6 +72,7 @@ public class GameState implements Runnable {
 		
 		clientEntityPairs.add(entry);
 		handler.notifyCreation(new AbstractMap.SimpleEntry<Client, Entity>(entryCopy));
+		return e;
 	}
 
 	// Place players on map
@@ -94,18 +95,32 @@ public class GameState implements Runnable {
 		}
 	}
 
+	private void attemptPlaceMinions() {
+		if(beatCount % 4 == 0){
+			Client c = new AIClient();
+			handler.addObserver(c);
+			Entity e = pairClientToNewEntity(c);
+			map.put(e,map.getSpawnSquare());
+			c.addObserver(handler);
+		}
+	}
+
 	private void update() {
 		delta = System.nanoTime() - timeOfLastUpdate;
 		if (isDone()) {
 			running = false;
 		} else if (beatHasElapsed(delta)) {
+			if(jamming){
+				attemptPlaceMinions();
+				beatCount++;
+			}
 			movePlayers();
 			timeOfLastUpdate = System.nanoTime();
 		}
 	}
 
 	private boolean beatHasElapsed(long delta) {
-		return delta > 500000000L; // 120bpm
+		return delta > beatTime;
 	}
 
 	private void movePlayers() {
@@ -116,9 +131,13 @@ public class GameState implements Runnable {
 			if(e instanceof Player){
 				if(!validMovement(e, input)){
 					running = false;
+					handler.notifyDestruction(this);
 				}
 			}
 			if (validMovement(e, input)) {
+				if(beatCount % 2 == 0 && e instanceof Minion && ((Minion) e).getMinionType() == MinionType.FLASH){
+					map.move(e, map.getSpawnSquare());
+				}
 				map.move(e, Position.calcPosition(e.getPosition(), input));
 			}
 		}
@@ -145,6 +164,12 @@ public class GameState implements Runnable {
 				for(Entry<Client, Entity> entry : clientEntityPairs){
 					if(entry.getValue() == m){
 						handler.notifyDestruction(new Minion(m));
+						if(m.getMinionType() == MinionType.SPEED){
+							beatTime /= 1.2; // Speed is 20% faster
+						} else if (m.getMinionType() == MinionType.DEATH){
+							running = false;
+							handler.notifyDestruction(this);
+						}
 						clientEntityPairs.remove(entry);
 						map.remove(m);
 						break;
@@ -176,6 +201,10 @@ public class GameState implements Runnable {
 			}
 		}
 		return null;
+	}
+
+	public void beginJams() {
+		jamming = true;
 	}
 
 }

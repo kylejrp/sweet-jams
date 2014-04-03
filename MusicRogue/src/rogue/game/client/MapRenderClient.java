@@ -7,9 +7,12 @@ import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 
 import rogue.entity.Entity;
+import rogue.entity.badguys.Minion;
+import rogue.entity.player.Player;
 import rogue.game.MapRenderer;
 import rogue.game.message.Message;
 import rogue.game.message.Message.MessageDetail;
+import rogue.game.state.GameState;
 import rogue.map.GameMap;
 
 public class MapRenderClient extends Client {
@@ -34,12 +37,22 @@ public class MapRenderClient extends Client {
 			// Need a better way to check that it is a List<Entity> though
 			List<Entity> entLayer = (List<Entity>) msg.getObject();
 			renderer.setEntities(entLayer);
+			for(Entity e : entLayer){
+				if(e.equals(renderer.getPlayer())){
+					renderer.setPlayer((Player) e);
+				}
+			}
+			
 		} else if (msg.getObject() instanceof Entry<?, ?> && msg.getDetail() == MessageDetail.CREATE){
 			Client client = (Client)((Entry) msg.getObject()).getKey();
 			if (client.clientNumber == this.clientNumber){
-				renderer.setEntity((Entity)(((Entry) msg.getObject()).getValue()));
+				renderer.setPlayer((Player)(((Entry) msg.getObject()).getValue()));
 			}
 			
+		} else if (msg.getObject() instanceof GameState && msg.getDetail() == MessageDetail.DESTROY){
+			renderer.setRunning(false);
+		} else if (msg.getObject() instanceof Minion && msg.getDetail() == MessageDetail.DESTROY){
+			renderer.handleCollision(((Minion) msg.getObject()).getMinionType());
 		}
 	}
 

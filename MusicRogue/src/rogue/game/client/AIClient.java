@@ -10,6 +10,7 @@ import rogue.entity.badguys.Minion.MinionType;
 import rogue.entity.player.Player;
 import rogue.game.message.Message;
 import rogue.game.message.Message.MessageDetail;
+import rogue.game.state.GameState;
 import rogue.game.state.InputBuffer.Input;
 import rogue.map.GameMap;
 import rogue.map.Position;
@@ -56,7 +57,9 @@ public class AIClient extends Client implements Runnable {
 			if (client.clientNumber == this.clientNumber) {
 				myEntity = (Minion) (((Entry) msg.getObject()).getValue());
 			}
-		} if (msg.getObject() instanceof Minion && msg.getDetail() == MessageDetail.DESTROY && ((Minion) msg.getObject()).equals(myEntity)) {
+		} else if (msg.getObject() instanceof Minion && msg.getDetail() == MessageDetail.DESTROY && ((Minion) msg.getObject()).equals(myEntity)) {
+			running = false;
+		} else if (msg.getObject() instanceof GameState && msg.getDetail() == MessageDetail.DESTROY){
 			running = false;
 		}
 	}

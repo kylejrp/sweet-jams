@@ -17,6 +17,8 @@ public class Player extends Entity {
 		if (e.getPosition() != null) {
 			this.position = new Position(e.getPosition());
 		}
+		this.buffer = new InputBuffer(((Player) e).getBuffer());
+		
 		this.ID = e.ID;
 	}
 

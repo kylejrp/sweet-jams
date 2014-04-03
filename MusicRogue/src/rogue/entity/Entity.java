@@ -7,7 +7,7 @@ import rogue.game.state.InputBuffer;
 import rogue.map.Position;
 
 public abstract class Entity{
-	private InputBuffer buffer;
+	protected InputBuffer buffer;
 	protected Position position;
 	protected int ID;
 	private static int currID = 0;
