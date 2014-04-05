@@ -77,6 +77,7 @@ public class MapRenderer extends BasicGame {
 		Shape bg = new Rectangle(0, 0, width, width);
 		g.setColor(new Color(30, 0, 0));
 		g.fill(bg);
+		
 		if (map != null) {
 			float scale = width / (map.getEnvironmentLayer().length);
 			Shape square = new Rectangle(1 * scale, 1 * scale, 1f * scale,
@@ -157,6 +158,8 @@ public class MapRenderer extends BasicGame {
 				renderGameOver(container, g);
 			}
 
+			g.setColor(Color.white);
+			g.drawString(Float.toString(totalTime/1000) + "s",10, 42);
 		}
 	}
 
@@ -242,6 +245,7 @@ public class MapRenderer extends BasicGame {
 	private float flashValue;
 	private float timeSinceLastUpdate = 0;
 	private float countdownToCheezyLine = 10000f;
+	private float totalTime = 0f;
 
 	@Override
 	public void update(GameContainer container, int delta)
@@ -251,6 +255,11 @@ public class MapRenderer extends BasicGame {
 		if (introtext == false) {
 			countdownToCheezyLine -= delta;
 		}
+		
+		if(!introtext && running){
+			totalTime += delta;
+		}
+		
 		if (countdownToCheezyLine <= 0) {
 			countdownToCheezyLine = 10000f;
 		}
